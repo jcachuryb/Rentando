@@ -15,9 +15,9 @@ public interface ICar {
 
 	String getBrand();
 
-	void setModel(String model);
+	void setReference(String ref);
 
-	String getModel();
+	String getReference();
 
 	void setDescription(String desc);
 

@@ -17,7 +17,7 @@ public class OfyCar implements ICar {
 	@Id private Integer id;
 	private String pictURL;
 	private String brand;
-	private String model;
+	private String reference;
 	private String description;
 	private String price;
 	private List<IRent> rentals;
@@ -60,15 +60,15 @@ public class OfyCar implements ICar {
 	}
 
 	@Override
-	public void setModel(String model) {
+	public void setReference(String model) {
 		// TODO Auto-generated method stub
-		this.model = model;
+		this.reference = model;
 	}
 
 	@Override
-	public String getModel() {
+	public String getReference() {
 		// TODO Auto-generated method stub
-		return this.model;
+		return this.reference;
 	}
 
 	@Override

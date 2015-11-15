@@ -1,9 +1,10 @@
 package co.edu.unal.rentando.server.servlet;
 
+import javax.inject.Singleton;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
-
+@Singleton
 public class SqlServlet extends HttpServlet {
 public static final String PARAM = "param";
 	

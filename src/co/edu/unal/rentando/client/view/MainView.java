@@ -4,37 +4,60 @@ import java.util.ArrayList;
 import java.util.List;
 
 import co.edu.unal.rentando.client.presenter.MainBarPresenter;
+import co.edu.unal.rentando.client.presenter.MainBarPresenter.MenuItemLists;
+import co.edu.unal.rentando.client.presenter.MainBarPresenter.MenuItemType;
 
+import com.google.gwt.dev.asm.Label;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class MainView extends Composite implements MainBarPresenter.Display {
 
-	public final Anchor imgAnchor = new Anchor();
-	public final List<MenuBarItem> mainMenu = new ArrayList<>();;
-	public final HorizontalPanel bar = new HorizontalPanel();
+//	public HTML appName;
+	public List<MenuBarItem> mainMenu = new ArrayList<>();;
+	public HorizontalPanel bar = new HorizontalPanel();
+	public HorizontalPanel menuList = new HorizontalPanel();
 
-	public MainView() {
+	public MainView(MenuItemLists list) {
+		mainMenu.clear();
 		mainMenu.add(new MenuBarItem(MenuItemType.INICIO));
-		mainMenu.add(new MenuBarItem(MenuItemType.ENTRAR));
-		addStyles();
-	}
+		switch (list) {
+		case normalUser:
+			mainMenu.add(new MenuBarItem(MenuItemType.PERFIL));
+			mainMenu.add(new MenuBarItem(MenuItemType.EXTRA));
+			mainMenu.add(new MenuBarItem(MenuItemType.SALIR));
+			break;
+		case adminUser:
+			mainMenu.add(new MenuBarItem(MenuItemType.PERFIL));
+			mainMenu.add(new MenuBarItem(MenuItemType.USUARIOS));
+			break;
 
-	public MainView(List<MenuItemType> items) {
-		// TODO Auto-generated constructor stub
-		for (MenuItemType menuBarItem : items) {
-			mainMenu.add(new MenuBarItem(menuBarItem));
+		default:
+			mainMenu.add(new MenuBarItem(MenuItemType.ENTRAR));
+			break;
 		}
+		
 		addStyles();
+//		bar.add(appName);
+		for (MenuBarItem listElement : this.mainMenu) {
+			menuList.add(listElement.link);
+		}
+		bar.add(menuList);
+		Window.alert(bar.toString());
 	}
 
 	private void addStyles() {
-		// TODO Auto-generated method stub
-		
-	}
+		bar.getElement().addClassName("main-bar");
+//		appName = new HTML("<span style='font-size:16pt'><span style='color:#fff'>RENT</span><span style='color:#F4EB49'>RENT</span></span>");
+		menuList.getElement().addClassName("mnu-list");
 
+	}
 
 	class MenuBarItem {
 		private Anchor link;
@@ -45,8 +68,10 @@ public class MainView extends Composite implements MainBarPresenter.Display {
 		}
 
 		public MenuBarItem(MenuItemType type) {
-			this.link = new Anchor(type.toString());
 			this.type = type;
+			this.link = new Anchor(type.toString());
+			this.link.getElement().addClassName("mnu-li-item");
+
 		}
 
 		public Anchor getLink() {
@@ -67,19 +92,15 @@ public class MainView extends Composite implements MainBarPresenter.Display {
 
 	}
 
-	public static enum MenuItemType {
-		INICIO, PERFIL, EXTRA, USUARIOS, SALIR, ENTRAR;
-	}
-
-	private Anchor lookForItem(MenuItemType item){
-		for (MenuBarItem elem: this.mainMenu) {
+	private Anchor lookForItem(MenuItemType item) {
+		for (MenuBarItem elem : this.mainMenu) {
 			if (elem.getType().equals(item)) {
 				return elem.link;
 			}
 		}
 		return null;
 	}
-	
+
 	@Override
 	public HasClickHandlers getHomeButton() {
 		// TODO Auto-generated method stub
@@ -107,13 +128,18 @@ public class MainView extends Composite implements MainBarPresenter.Display {
 	@Override
 	public HasClickHandlers getLoginButton() {
 		// TODO Auto-generated method stub
-		return lookForItem(MenuItemType.SALIR);
+		return lookForItem(MenuItemType.ENTRAR);
 	}
 
 	@Override
 	public HasClickHandlers getExtraInfoButton() {
 		// TODO Auto-generated method stub
 		return lookForItem(MenuItemType.EXTRA);
+	}
+
+	@Override
+	public Widget asWidget() {
+		return bar;
 	}
 
 }

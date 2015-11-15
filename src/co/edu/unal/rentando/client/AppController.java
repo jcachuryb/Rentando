@@ -3,7 +3,9 @@ package co.edu.unal.rentando.client;
 import co.edu.unal.rentando.client.event.LoginEvent;
 import co.edu.unal.rentando.client.event.LoginEventHandler;
 import co.edu.unal.rentando.client.presenter.IPresenter;
+import co.edu.unal.rentando.client.presenter.IndexPresenter;
 import co.edu.unal.rentando.client.presenter.LoginPresenter;
+import co.edu.unal.rentando.client.view.IndexView;
 import co.edu.unal.rentando.client.view.LoginView;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -30,7 +32,7 @@ public class AppController implements IPresenter, ValueChangeHandler<String> {
 
 			@Override
 			public void onLogin(LoginEvent event) {
-				
+
 			}
 		});
 
@@ -56,9 +58,13 @@ public class AppController implements IPresenter, ValueChangeHandler<String> {
 			if (token.equals("login")) {
 				presenter = new LoginPresenter(rpcService, eventBus,
 						new LoginView());
-			}else if (token.equals("index")) {
-				presenter = new LoginPresenter(rpcService, eventBus,
-						new LoginView());
+			} else if (token.equals("index")) {
+				presenter = new IndexPresenter(rpcService, eventBus,
+						new IndexView());
+			}
+
+			if (presenter != null) {
+				presenter.go(container);
 			}
 		}
 	}

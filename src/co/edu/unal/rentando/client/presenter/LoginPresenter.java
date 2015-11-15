@@ -1,6 +1,8 @@
 package co.edu.unal.rentando.client.presenter;
 
 import co.edu.unal.rentando.client.RentandoServiceAsync;
+import co.edu.unal.rentando.client.presenter.MainBarPresenter.MenuItemLists;
+import co.edu.unal.rentando.client.view.MainView;
 import co.edu.unal.rentando.shared.UserInfo;
 
 import com.google.gwt.event.shared.HandlerManager;
@@ -8,8 +10,10 @@ import com.google.gwt.user.client.ui.HasWidgets;
 
 public class LoginPresenter extends Presenter implements IPresenter {
 
+	MainBarPresenter mainBarPresenter;
+	
 	public interface Display {
-
+		
 	}
 
 	public final Display display;
@@ -20,7 +24,7 @@ public class LoginPresenter extends Presenter implements IPresenter {
 		super(rpcService, eventBus);
 		this.display = view;
 		this.userInfo = new UserInfo(); 
-		bind();
+		mainBarPresenter = new MainBarPresenter(rpcService, eventBus, new MainView(MenuItemLists.unknown));
 		// TODO Auto-generated constructor stub
 	}
 
@@ -32,7 +36,9 @@ public class LoginPresenter extends Presenter implements IPresenter {
 	@Override
 	public void go(HasWidgets container) {
 		// TODO Auto-generated method stub
-
+		this.mainBarPresenter.go(container);
+		bind();
+		
 	}
 
 }
