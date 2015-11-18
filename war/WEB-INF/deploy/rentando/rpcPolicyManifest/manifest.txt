@@ -1,2 +1,3 @@
 # Module rentando
 # RPC service class, partial path of RPC policy file
+co.edu.unal.rentando.client.RentandoService, 9B60040C6BE3A727BA4E32F2056BADA3.gwt.rpc

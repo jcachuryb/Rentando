@@ -113,4 +113,14 @@ public class UserInfo implements Serializable {
 				+ ", hasABooking=" + hasABooking + "]";
 	}
 
+	
+	public static UserInfo getTestUser(){
+		UserInfo u = new UserInfo();
+		u.setName("Test Camilo");
+		u.setLastName("Achury Test");
+		u.setEmail("truancamilo@gmail.com");
+		u.setPictureUrl("https://lh3.googleusercontent.com/-ZPNT_7ji8Do/AAAAAAAAAAI/AAAAAAAAAI8/1Li1krFwtdM/photo.jpg");
+		u.setRole(UserRole.admin_user);
+		return u;
+	}
 }

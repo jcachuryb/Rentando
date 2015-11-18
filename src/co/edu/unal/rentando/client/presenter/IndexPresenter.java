@@ -1,8 +1,7 @@
 package co.edu.unal.rentando.client.presenter;
 
 import co.edu.unal.rentando.client.RentandoServiceAsync;
-import co.edu.unal.rentando.client.presenter.MainBarPresenter.MenuItemLists;
-import co.edu.unal.rentando.client.view.MainView;
+import co.edu.unal.rentando.client.presenter.MainBarPresenter.MenuItemType;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -15,7 +14,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class IndexPresenter extends Presenter implements IPresenter {
 	public interface Display {
 		HasClickHandlers getButton();
-		
+
 		Widget asWidget();
 	}
 
@@ -26,8 +25,8 @@ public class IndexPresenter extends Presenter implements IPresenter {
 			HandlerManager eventBus, Display view) {
 		super(rpcService, eventBus);
 		display = view;
-		mbPresenter = new MainBarPresenter(rpcService, eventBus, new MainView(
-				MenuItemLists.unknown));
+		mbPresenter = MainBarPresenter.getInstance();
+		mbPresenter.setSelected(MenuItemType.INICIO);
 	}
 
 	@Override
@@ -39,10 +38,11 @@ public class IndexPresenter extends Presenter implements IPresenter {
 
 	private void bind() {
 		display.getButton().addClickHandler(new ClickHandler() {
-			
+
 			@Override
 			public void onClick(ClickEvent event) {
-				Window.alert("Works");;
+				Window.alert("Works");
+				;
 			}
 		});
 

@@ -14,7 +14,7 @@ import com.googlecode.objectify.annotation.Id;
 @Entity
 public class OfyCar implements ICar {
 
-	@Id private Integer id;
+	@Id private String id;
 	private String pictURL;
 	private String brand;
 	private String reference;
@@ -24,13 +24,13 @@ public class OfyCar implements ICar {
 	
 	
 	@Override
-	public void setId(Integer id) {
+	public void setId(String id) {
 		// TODO Auto-generated method stub
 		this.id = id;
 	}
 
 	@Override
-	public Integer getId() {
+	public String getId() {
 		// TODO Auto-generated method stub
 		return id;
 	}

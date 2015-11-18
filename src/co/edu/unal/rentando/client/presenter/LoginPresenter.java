@@ -3,8 +3,10 @@ package co.edu.unal.rentando.client.presenter;
 import co.edu.unal.rentando.client.RentandoServiceAsync;
 import co.edu.unal.rentando.client.presenter.MainBarPresenter.MenuItemLists;
 import co.edu.unal.rentando.client.view.MainView;
+import co.edu.unal.rentando.shared.CarInfo;
 import co.edu.unal.rentando.shared.UserInfo;
 
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.ui.HasWidgets;
 
@@ -24,7 +26,7 @@ public class LoginPresenter extends Presenter implements IPresenter {
 		super(rpcService, eventBus);
 		this.display = view;
 		this.userInfo = new UserInfo(); 
-		mainBarPresenter = new MainBarPresenter(rpcService, eventBus, new MainView(MenuItemLists.unknown));
+		mainBarPresenter = MainBarPresenter.getInstance();
 		// TODO Auto-generated constructor stub
 	}
 

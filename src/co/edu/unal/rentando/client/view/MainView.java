@@ -19,10 +19,12 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class MainView extends Composite implements MainBarPresenter.Display {
 
-//	public HTML appName;
+	public HTML appName;
 	public List<MenuBarItem> mainMenu = new ArrayList<>();;
 	public HorizontalPanel bar = new HorizontalPanel();
 	public HorizontalPanel menuList = new HorizontalPanel();
+	private final boolean doLogin;
+	private Anchor selected;
 
 	public MainView(MenuItemLists list) {
 		mainMenu.clear();
@@ -32,29 +34,33 @@ public class MainView extends Composite implements MainBarPresenter.Display {
 			mainMenu.add(new MenuBarItem(MenuItemType.PERFIL));
 			mainMenu.add(new MenuBarItem(MenuItemType.EXTRA));
 			mainMenu.add(new MenuBarItem(MenuItemType.SALIR));
+			doLogin = false;
 			break;
 		case adminUser:
 			mainMenu.add(new MenuBarItem(MenuItemType.PERFIL));
 			mainMenu.add(new MenuBarItem(MenuItemType.USUARIOS));
+			mainMenu.add(new MenuBarItem(MenuItemType.SALIR));
+			doLogin = false;
 			break;
 
 		default:
 			mainMenu.add(new MenuBarItem(MenuItemType.ENTRAR));
+			doLogin = true;
 			break;
 		}
-		
+		selected = lookForItem(MenuItemType.INICIO);
 		addStyles();
-//		bar.add(appName);
+		bar.add(appName);
 		for (MenuBarItem listElement : this.mainMenu) {
 			menuList.add(listElement.link);
 		}
 		bar.add(menuList);
-		Window.alert(bar.toString());
 	}
 
 	private void addStyles() {
 		bar.getElement().addClassName("main-bar");
-//		appName = new HTML("<span style='font-size:16pt'><span style='color:#fff'>RENT</span><span style='color:#F4EB49'>RENT</span></span>");
+		appName = new HTML(
+				"<span style='font-size: 20pt;margin: 8px;font-weight: 700;position: relative;top: 6px;'><span style='color:#fff'>RENT</span><span style='color:#F4EB49'>ANDO</span></span>");
 		menuList.getElement().addClassName("mnu-list");
 
 	}
@@ -90,6 +96,12 @@ public class MainView extends Composite implements MainBarPresenter.Display {
 			this.type = type;
 		}
 
+	}
+	@Override
+	public void setSelected(MenuItemType item){
+		selected.getElement().removeClassName("mnu-selected");
+		selected = lookForItem(item);
+		selected.getElement().setClassName("mnu-selected");
 	}
 
 	private Anchor lookForItem(MenuItemType item) {
@@ -140,6 +152,24 @@ public class MainView extends Composite implements MainBarPresenter.Display {
 	@Override
 	public Widget asWidget() {
 		return bar;
+	}
+
+	@Override
+	public Anchor getLoginLink() {
+		// TODO Auto-generated method stub
+		return lookForItem(MenuItemType.ENTRAR);
+	}
+
+	@Override
+	public Anchor getLogoutLink() {
+		// TODO Auto-generated method stub
+		return lookForItem(MenuItemType.SALIR);
+	}
+
+	@Override
+	public boolean doLogin() {
+		// TODO Auto-generated method stub
+		return doLogin;
 	}
 
 }

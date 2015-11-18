@@ -3,9 +3,9 @@ package co.edu.unal.rentando.shared.many2many;
 import java.util.List;
 
 public interface ICar {
-	void setId(Integer id);
+	void setId(String id);
 
-	Integer getId();
+	String getId();
 
 	void setPicture(String pictURL);
 
