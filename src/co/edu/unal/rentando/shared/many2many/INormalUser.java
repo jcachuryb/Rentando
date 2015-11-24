@@ -15,5 +15,11 @@ public interface INormalUser {
 	void setCurentRent(IRent rent);
 
 	IRent getCurentRent();
+	
+	IProfileInfo getProfileInfo();
+	
+	String getId();
+	
+	void setId(String id);
 
 }

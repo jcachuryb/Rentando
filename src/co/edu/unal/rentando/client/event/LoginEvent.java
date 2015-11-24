@@ -1,19 +1,21 @@
 package co.edu.unal.rentando.client.event;
 
-import co.edu.unal.rentando.shared.many2many.IUser.UserRole;
+import java.util.List;
+
+import co.edu.unal.rentando.shared.many2many.IUsrLogin.UserRole;
 
 import com.google.gwt.event.shared.GwtEvent;
 
 public class LoginEvent extends GwtEvent<LoginEventHandler>{
 	public static Type<LoginEventHandler> TYPE = new Type<LoginEventHandler>();
 	
-	private UserRole userRole;
-	public LoginEvent(UserRole role) {
-		this.userRole = role;
+	private List<UserRole> userRoles;
+	public LoginEvent(List<UserRole> roles) {
+		this.userRoles = roles;
 	}
 	
-	public UserRole getRole(){
-		return userRole;
+	public List<UserRole> getUserRoles(){
+		return userRoles;
 	}
 	
 	@Override

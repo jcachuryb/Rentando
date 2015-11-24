@@ -12,6 +12,8 @@ import co.edu.unal.rentando.shared.CarInfo;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
@@ -31,6 +33,7 @@ public class AdminCarView extends Composite implements
 	private final Button addButton;
 	private final List<CarListItem> carList;
 	private CarInfo currentCar;
+	private CarPopUp popup;
 
 	public AdminCarView() {
 		container = new VerticalPanel();
@@ -50,23 +53,21 @@ public class AdminCarView extends Composite implements
 
 			@Override
 			public void onClick(ClickEvent event) {
-				currentCar = new CarInfo();
+				setCurrentCar(new CarInfo());
 				displayCarEditionView();
-
 			}
 		});
 		container.add(addButton);
-		container.add(new HTML("<hr>"));
-		
 
 		// TODO Auto-generated method stub
 
 	}
 
-
 	void displayCarEditionView() {
-		CarPopUp popup = new CarPopUp(currentCar);
-		popup.show();
+		if (popup == null || !popup.isVisible()) {
+			popup = new CarPopUp(getCurrentcar());
+			popup.show();
+		}
 	}
 
 	class CarListClickHandler implements ClickHandler {
@@ -104,6 +105,8 @@ public class AdminCarView extends Composite implements
 		public CarPopUp(CarInfo carInfo) {
 			super(false);
 			this.car = carInfo;
+			this.car.setIsNew(car.getId() == "" ? true: false);
+			this.id.getInput().setEnabled(car.isNew());
 			fillWidget();
 			setWidget(mainPanel);
 		}
@@ -123,7 +126,8 @@ public class AdminCarView extends Composite implements
 
 				@Override
 				public void onClick(ClickEvent event) {
-					hide();
+					transactionDone();
+					
 				}
 			});
 			// ----------------------------------------
@@ -135,7 +139,7 @@ public class AdminCarView extends Composite implements
 			vp.add(ref.getPanel());
 			vp.add(price.getPanel());
 			mainPanel.add(vp);
-			
+
 			vp = new VerticalPanel();
 			vp.add(image);
 			vp.add(desc);
@@ -144,9 +148,23 @@ public class AdminCarView extends Composite implements
 			hp.add(deleteButton);
 			hp.add(saveButton);
 			mainPanel.add(hp);
-
+		
+		}
+		
+		public void updateCurrentCar(){
+			car.setId(id.getInput().getText());
+			car.setBrand(brand.getInput().getText());
+			car.setPictURL(picture.getInput().getText());
+			car.setDescription(desc.getText());
+			car.setPrice(price.getInput().getText());
+			car.setReference(ref.getInput().getText());
+			setCurrentCar(car);
 		}
 
+	}
+
+	private void setCurrentCar(CarInfo car) {
+		currentCar = car;
 	}
 
 	@Override
@@ -169,6 +187,7 @@ public class AdminCarView extends Composite implements
 
 	@Override
 	public void fillCarList(List<CarInfo> list) {
+		carList.clear();
 		for (CarInfo carInfo : list) {
 			CarListItem item = new CarListItem();
 			item.fillCarInfo(carInfo);
@@ -182,5 +201,19 @@ public class AdminCarView extends Composite implements
 	public Widget asWidget() {
 		// TODO Auto-generated method stub
 		return container;
+	}
+
+	@Override
+	public void updateCurrentCar() {
+		popup.updateCurrentCar();
+	}
+	
+	@Override
+	public void transactionDone() {
+		if (popup != null) {
+			popup.hide();
+			popup = null;
+		}
+		
 	}
 }

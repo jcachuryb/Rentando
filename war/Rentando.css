@@ -107,3 +107,24 @@ a:VISITED,a:HOVER {
 		ease-in-out .15s;
 	transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
 }
+
+.login-table{
+    background: #CFD5E6;
+    position: relative;
+    margin: auto;
+    top: 20px;
+}
+
+.login-table tr td{
+    padding: 20px;
+    color: black;
+   
+}
+.login-table-header{
+	color: #fff;
+	font-size: 14pt;
+}
+
+.login-table tr {
+    border-bottom: 1px dashed #27396D;
+}

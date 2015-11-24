@@ -3,9 +3,11 @@ package co.edu.unal.rentando.client.view;
 import java.util.ArrayList;
 import java.util.List;
 
+import co.edu.unal.rentando.client.AppController;
 import co.edu.unal.rentando.client.presenter.MainBarPresenter;
 import co.edu.unal.rentando.client.presenter.MainBarPresenter.MenuItemLists;
 import co.edu.unal.rentando.client.presenter.MainBarPresenter.MenuItemType;
+import co.edu.unal.rentando.shared.many2many.IUsrLogin.UserRole;
 
 import com.google.gwt.dev.asm.Label;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -15,6 +17,7 @@ import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.Widget;
 
 public class MainView extends Composite implements MainBarPresenter.Display {
@@ -23,38 +26,28 @@ public class MainView extends Composite implements MainBarPresenter.Display {
 	public List<MenuBarItem> mainMenu = new ArrayList<>();;
 	public HorizontalPanel bar = new HorizontalPanel();
 	public HorizontalPanel menuList = new HorizontalPanel();
-	private final boolean doLogin;
 	private Anchor selected;
 
-	public MainView(MenuItemLists list) {
-		mainMenu.clear();
+	public MainView() {
+		mainMenu.add(new MenuBarItem(MenuItemType.ENTRAR));
 		mainMenu.add(new MenuBarItem(MenuItemType.INICIO));
-		switch (list) {
-		case normalUser:
-			mainMenu.add(new MenuBarItem(MenuItemType.PERFIL));
-			mainMenu.add(new MenuBarItem(MenuItemType.EXTRA));
-			mainMenu.add(new MenuBarItem(MenuItemType.SALIR));
-			doLogin = false;
-			break;
-		case adminUser:
-			mainMenu.add(new MenuBarItem(MenuItemType.PERFIL));
-			mainMenu.add(new MenuBarItem(MenuItemType.USUARIOS));
-			mainMenu.add(new MenuBarItem(MenuItemType.SALIR));
-			doLogin = false;
-			break;
+		mainMenu.add(new MenuBarItem(MenuItemType.PERFIL));
+		mainMenu.add(new MenuBarItem(MenuItemType.USUARIOS));
+		mainMenu.add(new MenuBarItem(MenuItemType.SALIR));
 
-		default:
-			mainMenu.add(new MenuBarItem(MenuItemType.ENTRAR));
-			doLogin = true;
-			break;
-		}
 		selected = lookForItem(MenuItemType.INICIO);
 		addStyles();
 		bar.add(appName);
+		updateMenuList();
+		bar.add(menuList);
+		updateMenuBarList(AppController.getActiveRoles());
+	}
+
+	private void updateMenuList() {
+		menuList.clear();
 		for (MenuBarItem listElement : this.mainMenu) {
 			menuList.add(listElement.link);
 		}
-		bar.add(menuList);
 	}
 
 	private void addStyles() {
@@ -68,6 +61,7 @@ public class MainView extends Composite implements MainBarPresenter.Display {
 	class MenuBarItem {
 		private Anchor link;
 		private MenuItemType type;
+		private boolean visibility = false;
 
 		public MenuBarItem() {
 			// TODO Auto-generated constructor stub
@@ -96,12 +90,23 @@ public class MainView extends Composite implements MainBarPresenter.Display {
 			this.type = type;
 		}
 
+		public boolean isVisibility() {
+			return visibility;
+		}
+
+		public void setVisibility(boolean visibility) {
+			this.visibility = visibility;
+			link.setVisible(visibility);
+		}
+
 	}
+
 	@Override
-	public void setSelected(MenuItemType item){
-		selected.getElement().removeClassName("mnu-selected");
+	public void setSelected(MenuItemType item) {
+		selected.getElement().setAttribute("style", "color:#fff !important");
 		selected = lookForItem(item);
-		selected.getElement().setClassName("mnu-selected");
+		selected.getElement()
+				.setAttribute("style", "color: #F4EB49 !important");
 	}
 
 	private Anchor lookForItem(MenuItemType item) {
@@ -144,12 +149,6 @@ public class MainView extends Composite implements MainBarPresenter.Display {
 	}
 
 	@Override
-	public HasClickHandlers getExtraInfoButton() {
-		// TODO Auto-generated method stub
-		return lookForItem(MenuItemType.EXTRA);
-	}
-
-	@Override
 	public Widget asWidget() {
 		return bar;
 	}
@@ -167,9 +166,36 @@ public class MainView extends Composite implements MainBarPresenter.Display {
 	}
 
 	@Override
-	public boolean doLogin() {
-		// TODO Auto-generated method stub
-		return doLogin;
+	public void updateMenuBarList(List<UserRole> roles) {
+		if (roles.contains(UserRole.outside_user)) {
+			hideMenuItem(MenuItemType.INICIO);
+			hideMenuItem(MenuItemType.USUARIOS);
+			hideMenuItem(MenuItemType.SALIR);
+			hideMenuItem(MenuItemType.PERFIL);
+			showMenuItem(MenuItemType.ENTRAR);
+			return;
+		}
+		hideMenuItem(MenuItemType.ENTRAR);
+		showMenuItem(MenuItemType.INICIO);
+		showMenuItem(MenuItemType.PERFIL);
+		if (roles.contains(UserRole.admin_user)) {
+			showMenuItem(MenuItemType.USUARIOS);
+		} else {
+			hideMenuItem(MenuItemType.ENTRAR);
+		}
+		showMenuItem(MenuItemType.SALIR);
+	}
+
+	private void hideMenuItem(MenuItemType type) {
+		setMenuItemVisibility(type, false);
+	}
+
+	private void showMenuItem(MenuItemType type) {
+		setMenuItemVisibility(type, true);
+	}
+
+	private void setMenuItemVisibility(MenuItemType type, boolean val) {
+		lookForItem(type).setVisible(val);
 	}
 
 }

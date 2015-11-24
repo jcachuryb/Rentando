@@ -3,6 +3,7 @@ package co.edu.unal.rentando.client.custom;
 import co.edu.unal.rentando.shared.CarInfo;
 
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -12,7 +13,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class CarListItem {
 	private final FocusPanel wrapper = new FocusPanel();
-	private final VerticalPanel r1 = new VerticalPanel();
+	private VerticalPanel r1 = new VerticalPanel();
 	private Image image = new Image();
 	private HTML title = new HTML();
 	private HTML description = new HTML();
@@ -21,6 +22,9 @@ public class CarListItem {
 	private final HorizontalPanel panel = new HorizontalPanel();
 
 	public CarListItem() {
+//		panel.getElement().setClassName("xs-col-12");
+		image.setHeight("150px");
+		image.setWidth("150px");
 		// TODO Auto-generated constructor stub
 	}
 
@@ -64,7 +68,7 @@ public class CarListItem {
 		image.setUrl(carInfo.getPictURL());
 		title.setHTML("<strong>" + carInfo.getBrand() + " "
 				+ carInfo.getReference() + "</strong>");
-		description.setHTML("<p class='li-car-desc'></p>");
+		description.setHTML("<p class='li-car-desc'>" + carInfo.getDescription() + "</p>");
 		price.setHTML("<strong>Precio por día:&nbsp;</strong>"
 				+ carInfo.getPrice());
 	}
@@ -74,11 +78,12 @@ public class CarListItem {
 		r1.add(title);
 		r1.add(image);
 		panel.add(r1);
-		r1.clear();
+		r1 = new VerticalPanel();
 		r1.add(new HTML("<strong>Sobre este auto: </strong>"));
 		r1.add(description);
 		r1.add(price);
-		wrapper.add(r1);
+		panel.add(r1);
+		wrapper.add(panel);
 
 		return wrapper;
 	}

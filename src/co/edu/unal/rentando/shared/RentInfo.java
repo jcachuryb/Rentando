@@ -9,4 +9,9 @@ public class RentInfo implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	public Object getInitialDate() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

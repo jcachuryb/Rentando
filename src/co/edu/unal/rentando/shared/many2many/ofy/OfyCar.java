@@ -1,12 +1,10 @@
 package co.edu.unal.rentando.shared.many2many.ofy;
 
-import java.util.Date;
 import java.util.List;
 
+import co.edu.unal.rentando.shared.RentInfo;
 import co.edu.unal.rentando.shared.many2many.ICar;
-import co.edu.unal.rentando.shared.many2many.IRent;
 
-import com.google.appengine.api.search.DateUtil;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 
@@ -20,7 +18,7 @@ public class OfyCar implements ICar {
 	private String reference;
 	private String description;
 	private String price;
-	private List<IRent> rentals;
+	private List<RentInfo> rentals;
 	
 	
 	@Override
@@ -98,9 +96,9 @@ public class OfyCar implements ICar {
 	
 	// TODO Hacer que funcione la parte de añadir rentas a la lista.
 	@Override
-	public synchronized void doRent(IRent rent) {
+	public synchronized void doRent(RentInfo rent) {
 		// TODO Auto-generated method stub
-		for (IRent current : rentals) {
+		for (RentInfo current : rentals) {
 			if (!current.getInitialDate().equals(rent.getInitialDate())) {
 				
 			}else{
@@ -116,13 +114,13 @@ public class OfyCar implements ICar {
 	}
 
 	@Override
-	public List<IRent> getRentals() {
+	public List<RentInfo> getRentals() {
 		// TODO Auto-generated method stub
 		return rentals;
 	}
 
 	@Override
-	public void removeRental(IRent value) {
+	public void removeRental(RentInfo value) {
 		// TODO Auto-generated method stub
 		try {
 			rentals.remove(value);
@@ -135,6 +133,12 @@ public class OfyCar implements ICar {
 	@Override
 	public void clearRentals() {
 		rentals.clear();
+	}
+
+	@Override
+	public void setRentals(List<RentInfo> list) {
+		this.rentals = list;
+		
 	}
 
 }

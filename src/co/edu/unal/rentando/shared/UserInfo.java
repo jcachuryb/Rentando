@@ -1,8 +1,10 @@
 package co.edu.unal.rentando.shared;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
-import co.edu.unal.rentando.shared.many2many.IUser.UserRole;
+import co.edu.unal.rentando.shared.many2many.IUsrLogin.UserRole;
 
 public class UserInfo implements Serializable {
 	/**
@@ -15,13 +17,8 @@ public class UserInfo implements Serializable {
 	private String lastName;
 	private String address;
 	private String document;
-	private String pictureUrl;
-	private UserRole role = UserRole.outside_user;
-	private boolean hasABooking;
-
+	private List<UserRole> roles = new ArrayList<>();
 	public boolean isLoggedIn = false;
-	public static final String ROLE_NORMAL = "normal-user";
-	public static final String ROLE_BASE = "base-user";
 
 	public UserInfo(String name, String email, String lastName) {
 		this.name = name;
@@ -30,6 +27,7 @@ public class UserInfo implements Serializable {
 	}
 
 	public UserInfo() {
+		roles.add(UserRole.outside_user);
 		// TODO Auto-generated constructor stub
 	}
 
@@ -81,46 +79,29 @@ public class UserInfo implements Serializable {
 		return phoneNumber;
 	}
 
-	public void setPictureUrl(String text) {
-		pictureUrl = text;
+	public List<UserRole> getRole() {
+		return roles;
 	}
 
-	public String getPictureURL() {
-		return pictureUrl;
-	}
-
-	public UserRole getRole() {
-		return role;
-	}
-
-	public void setRole(UserRole role) {
-		this.role = role;
-	}
-
-	public boolean hasABooking() {
-		return hasABooking;
-	}
-
-	public void setBookingID(boolean b) {
-		this.hasABooking = b;
+	public void setRoles(List<UserRole> role) {
+		this.roles = role;
 	}
 
 	@Override
 	public String toString() {
 		return "UserInfo [name=" + name + ", email=" + email + ", phoneNumber="
 				+ phoneNumber + ", lastName=" + lastName + ", address="
-				+ address + ", document=" + document + ", role=" + role
-				+ ", hasABooking=" + hasABooking + "]";
+				+ address + ", document=" + document + ", role=" + roles + "]";
 	}
 
-	
-	public static UserInfo getTestUser(){
+	public static UserInfo getTestUser() {
 		UserInfo u = new UserInfo();
 		u.setName("Test Camilo");
 		u.setLastName("Achury Test");
 		u.setEmail("truancamilo@gmail.com");
-		u.setPictureUrl("https://lh3.googleusercontent.com/-ZPNT_7ji8Do/AAAAAAAAAAI/AAAAAAAAAI8/1Li1krFwtdM/photo.jpg");
-		u.setRole(UserRole.admin_user);
+		ArrayList<UserRole> uRoles = new ArrayList<>();
+		uRoles.add(UserRole.admin_user);
+		u.setRoles(uRoles);
 		return u;
 	}
 }

@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import co.edu.unal.rentando.shared.many2many.ICar;
+
 public class CarInfo implements Serializable {
 
 	/**
@@ -17,6 +19,7 @@ public class CarInfo implements Serializable {
 	private String description;
 	private String price;
 	private List<RentInfo> rentals;
+	private boolean isNew;
 
 	public CarInfo(String id, String pictURL, String brand, String reference,
 			String description, String price, List<RentInfo> rentals) {
@@ -28,13 +31,15 @@ public class CarInfo implements Serializable {
 		this.price = price;
 		this.rentals = rentals;
 	}
-	public CarInfo(){
+
+	public CarInfo() {
 		this.id = "";
 		this.pictURL = "";
 		this.brand = "";
 		this.reference = "";
 		this.description = "";
 		this.price = "";
+		this.isNew = false;
 		this.rentals = new ArrayList<>();
 	}
 
@@ -94,8 +99,26 @@ public class CarInfo implements Serializable {
 		this.rentals = rentals;
 	}
 
+	public void setIsNew(boolean n) {
+		this.isNew = n;
+	}
+
+	public boolean isNew() {
+		return this.isNew;
+	}
+
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	public void fillOutCar(ICar iCar) {
+		this.setId(iCar.getId());
+		this.setBrand(iCar.getBrand());
+		this.setPictURL(iCar.getPicture());
+		this.setDescription(iCar.getDescription());
+		this.setReference(iCar.getReference());
+		this.setPrice(iCar.getRentalPrice());
+		this.setRentals(iCar.getRentals());
 	}
 
 }
