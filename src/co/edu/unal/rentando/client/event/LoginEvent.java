@@ -9,14 +9,7 @@ import com.google.gwt.event.shared.GwtEvent;
 public class LoginEvent extends GwtEvent<LoginEventHandler>{
 	public static Type<LoginEventHandler> TYPE = new Type<LoginEventHandler>();
 	
-	private List<UserRole> userRoles;
-	public LoginEvent(List<UserRole> roles) {
-		this.userRoles = roles;
-	}
 	
-	public List<UserRole> getUserRoles(){
-		return userRoles;
-	}
 	
 	@Override
 	public com.google.gwt.event.shared.GwtEvent.Type<LoginEventHandler> getAssociatedType() {

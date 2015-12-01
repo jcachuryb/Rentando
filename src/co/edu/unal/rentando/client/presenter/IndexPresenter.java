@@ -1,15 +1,16 @@
 package co.edu.unal.rentando.client.presenter;
 
+import java.awt.FlowLayout;
 import java.util.ArrayList;
 import java.util.List;
 
 import co.edu.unal.rentando.client.RentandoServiceAsync;
-import co.edu.unal.rentando.client.presenter.MainBarPresenter.MenuItemType;
 
+import com.google.gwt.dom.client.Style.VerticalAlign;
 import com.google.gwt.event.shared.HandlerManager;
-import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class IndexPresenter extends Presenter implements IPresenter {
@@ -38,16 +39,16 @@ public class IndexPresenter extends Presenter implements IPresenter {
 
 	@Override
 	public void go(HasWidgets container) {
-		if (!container.iterator().hasNext()) {
-			MainBarPresenter.getInstance().go(container);
-		}
 		List<Widget> views = new ArrayList<>();
 		for (IPresenter pr : presenters) {
-			pr.go(new HorizontalPanel());
+			pr.go(new FlowPanel());
 			views.add(pr.getMainWidget());
 		}
 		display.setUpTab(views, labels);
-		container.add(display.asWidget());
+		mbPresenter.go(container);
+		FlowPanel panel = new FlowPanel();
+		panel.add(display.asWidget());
+		container.add(panel);
 	}
 
 	@Override

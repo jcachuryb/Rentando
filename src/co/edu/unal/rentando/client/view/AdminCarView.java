@@ -17,26 +17,30 @@ import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class AdminCarView extends Composite implements
 		AdminCarPresenter.Display {
-	private final VerticalPanel container;
+	private final FlowPanel container;
 	private final Button saveButton;
 	private final Button deleteButton;
 	private final Button addButton;
 	private final List<CarListItem> carList;
 	private CarInfo currentCar;
 	private CarPopUp popup;
-
+	ScrollPanel scroll;
 	public AdminCarView() {
-		container = new VerticalPanel();
+		container = new FlowPanel();
+		scroll = new ScrollPanel();
+		scroll.setHeight("400px");
 		saveButton = new Button("Guardar");
 		deleteButton = new Button("Borrar");
 		addButton = new Button("Añadir");
@@ -44,6 +48,7 @@ public class AdminCarView extends Composite implements
 
 		// TODO Auto-generated constructor stub
 		addWidgetsAndStyles();
+		scroll.add(container);
 	}
 
 	private void addWidgetsAndStyles() {
@@ -200,7 +205,7 @@ public class AdminCarView extends Composite implements
 	@Override
 	public Widget asWidget() {
 		// TODO Auto-generated method stub
-		return container;
+		return scroll;
 	}
 
 	@Override

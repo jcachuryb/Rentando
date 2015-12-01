@@ -3,24 +3,24 @@ package co.edu.unal.rentando.client;
 import java.util.ArrayList;
 import java.util.List;
 
-import co.edu.unal.rentando.client.event.LoginEvent;
-import co.edu.unal.rentando.client.event.LoginEventHandler;
 import co.edu.unal.rentando.client.event.IndexEvent;
 import co.edu.unal.rentando.client.event.IndexEventHandler;
+import co.edu.unal.rentando.client.event.LoginEvent;
+import co.edu.unal.rentando.client.event.LoginEventHandler;
 import co.edu.unal.rentando.client.event.ViewProfileEvent;
 import co.edu.unal.rentando.client.event.ViewProfileEventHandler;
 import co.edu.unal.rentando.client.presenter.AdminCarPresenter;
 import co.edu.unal.rentando.client.presenter.IPresenter;
 import co.edu.unal.rentando.client.presenter.IndexPresenter;
 import co.edu.unal.rentando.client.presenter.MainBarPresenter;
-import co.edu.unal.rentando.client.presenter.MainBarPresenter.MenuItemLists;
 import co.edu.unal.rentando.client.presenter.SuperAdminConsolePresenter;
+import co.edu.unal.rentando.client.presenter.UserPresenter;
 import co.edu.unal.rentando.client.view.AdminCarView;
 import co.edu.unal.rentando.client.view.IndexView;
 import co.edu.unal.rentando.client.view.MainView;
 import co.edu.unal.rentando.client.view.SuperAdminConsoleView;
+import co.edu.unal.rentando.client.view.UserView;
 import co.edu.unal.rentando.shared.LoginInfo;
-import co.edu.unal.rentando.shared.UserInfo;
 import co.edu.unal.rentando.shared.UsrLoginInfo;
 import co.edu.unal.rentando.shared.many2many.IUsrLogin.UserRole;
 
@@ -49,10 +49,10 @@ public class AppController implements IPresenter, ValueChangeHandler<String> {
 		this.eventBus = eventBus;
 		this.rpcService = rpcService;
 		bind();
+		addActiveRole(UserRole.outside_user);
 		MainBarPresenter.initializeBar(rpcService, eventBus, new MainView());
 		mainBarPres = MainBarPresenter.getInstance();
-		addActiveRole(UserRole.outside_user);
-		
+
 	}
 
 	@Override
@@ -62,7 +62,8 @@ public class AppController implements IPresenter, ValueChangeHandler<String> {
 
 			@Override
 			public void onLogin(LoginEvent event) {
-				doLogin(event.getUserRoles());
+				doLogin();
+				History.newItem(index);
 			}
 
 		});
@@ -94,32 +95,40 @@ public class AppController implements IPresenter, ValueChangeHandler<String> {
 
 	@Override
 	public void go(HasWidgets container) {
+		Window.alert("Main Go");
 		this.container = container;
 		doLogin();
-//		loadModules();
+		loadModules();
 	}
-	
-	
-	private void loadModules(){
 
-		if ("".equals(History.getToken())) {
-			History.newItem(main);
+	private void loadModules() {
+		Window.alert("Load M");
+
+		if (main.equals(History.getToken()) || "".equals(History.getToken())) {
+			if (getActiveRoles().contains(UserRole.outside_user)) {
+				History.newItem(main);
+			} else {
+				History.newItem(index);
+			}
 		} else {
-			
-			History.fireCurrentHistoryState();
+			if (getActiveRoles().contains(UserRole.outside_user)) {
+				History.newItem(main);
+			} else {
+				History.fireCurrentHistoryState();
+			}
 		}
 	}
-	
+
 	@Override
 	public void onValueChange(ValueChangeEvent<String> event) {
 		String token = event.getValue();
-
 		if (token != null) {
 			IPresenter presenter = null;
 			ArrayList<IPresenter> presenters = new ArrayList<>();
 			if (token.equals(main)) {
 				presenter = MainBarPresenter.getInstance();
-//				presenter = new SuperAdminConsolePresenter(rpcService, eventBus, new SuperAdminConsoleView());
+				// presenter = new SuperAdminConsolePresenter(rpcService,
+				// eventBus, new SuperAdminConsoleView());
 			} else if (token.equals(profile)) {
 
 			} else if (token.equals(index)) {
@@ -128,7 +137,12 @@ public class AppController implements IPresenter, ValueChangeHandler<String> {
 				for (UserRole roles : getActiveRoles()) {
 					switch (roles) {
 					case normal_user:
-						
+						// presenters.add(new UserPresenter(
+						// rpcService, eventBus,
+						// new UserView()));
+						presenters.add(new SuperAdminConsolePresenter(
+								rpcService, eventBus,
+								new SuperAdminConsoleView()));
 						label = "Usuario";
 						break;
 					case admin_user:
@@ -137,12 +151,13 @@ public class AppController implements IPresenter, ValueChangeHandler<String> {
 						label = "Admin";
 						break;
 					case super_admin:
-						presenters.add(new SuperAdminConsolePresenter(rpcService,
-								eventBus, new SuperAdminConsoleView()));
+						presenters.add(new SuperAdminConsolePresenter(
+								rpcService, eventBus,
+								new SuperAdminConsoleView()));
 						label = "Súper Admin";
 						break;
 					default:
-						
+						Window.alert("No role");
 						break;
 					}
 					labels.add(label);
@@ -152,7 +167,9 @@ public class AppController implements IPresenter, ValueChangeHandler<String> {
 						new IndexView(), presenters, labels);
 
 			} else if (token.equals(userlist)) {
-
+				presenter = new SuperAdminConsolePresenter(
+						rpcService, eventBus,
+						new SuperAdminConsoleView());
 			} else if (token.equals(admin)) {
 				presenter = new AdminCarPresenter(rpcService, eventBus,
 						new AdminCarView());
@@ -201,36 +218,40 @@ public class AppController implements IPresenter, ValueChangeHandler<String> {
 	private static final Auth AUTH = Auth.get();
 	private static final String GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2/auth";
 	private static final String GOOGLE_CLIENT_ID = "948749463453-ghhqlbkdfr27n3litcsrunbvbitvcckb.apps.googleusercontent.com";
-	private static final String PLUS_ME_PROFILE = "https://www.googleapis.com/auth/userinfo.profile";
 	private static final String PLUS_ME_EMAIL = "https://www.googleapis.com/auth/userinfo.email";
 
 	private void doLogin() {
-		rpcService.login(GWT.getHostPageBaseURL(),
-				new AsyncCallback<LoginInfo>() {
-					@Override
-					public void onFailure(final Throwable caught) {
-						GWT.log("login -> onFailure");
-					}
+		// rpcService.login(GWT.getHostPageBaseURL(),
+		// new AsyncCallback<LoginInfo>() {
+		// @Override
+		// public void onFailure(final Throwable caught) {
+		// GWT.log("login -> onFailure");
+		// }
+		//
+		// @Override
+		// public void onSuccess(final LoginInfo result) {
+		// Window.alert(result.toString());
+		// if (result.getName() != null
+		// && !result.getName().isEmpty()) {
+		// mainBarPres.loadLogout(result);
+		// addGoogleAuthHelper();
+		// } else {
+		// mainBarPres.loadLogin(result);
+		// loadModules();
+		// }
+		// }
+		// });
 
-					@Override
-					public void onSuccess(final LoginInfo result) {
-						if (result.getName() != null
-								&& !result.getName().isEmpty()) {
-							mainBarPres.loadLogout(result);
-							addGoogleAuthHelper();
-						} else {
-							mainBarPres.loadLogin(result);
-							loadModules();
-						}
-					}
-				});
+		setActiveRoles(getTestRoles());
+		Window.alert("TEST ROLES");
+
 	}
 
 	// TODO #07: add helper methods for Login, Logout and AuthRequest
 
 	private void addGoogleAuthHelper() {
 		final AuthRequest req = new AuthRequest(GOOGLE_AUTH_URL,
-				GOOGLE_CLIENT_ID).withScopes(PLUS_ME_PROFILE, PLUS_ME_EMAIL);
+				GOOGLE_CLIENT_ID).withScopes(PLUS_ME_EMAIL);
 
 		AUTH.login(req, new Callback<String, Throwable>() {
 			@Override
@@ -241,46 +262,24 @@ public class AppController implements IPresenter, ValueChangeHandler<String> {
 
 								@Override
 								public void onSuccess(UsrLoginInfo result) {
-									Window.alert("UsrLogin" + result.toString());
-									if (!result.userExists()) {
-										rpcService
-												.createUser(
-														result,
-														new AsyncCallback<UsrLoginInfo>() {
 
-															@Override
-															public void onSuccess(
-																	UsrLoginInfo result) {
-																Window.alert("Usuario creado:"
-																		+ result.toString());
-																AppController
-																		.setActiveRoles(result
-																				.getRoles());
-															}
+									Window.alert("Usuario cargado:"
+											+ result.toString());
+									AppController.setActiveRoles(result
+											.getRoles());
 
-															@Override
-															public void onFailure(
-																	Throwable caught) {
-																// TODO
-																// Auto-generated
-																// method stub
-
-															}
-														});
-									} else {
-										Window.alert("Usuario cargado:"
-												+ result.toString());
-										AppController.setActiveRoles(result
-												.getRoles());
-									}
 									loadModules();
 
 								}
 
 								@Override
 								public void onFailure(Throwable caught) {
-									// TODO Auto-generated method stub
+									Window.alert(caught.toString());
+									List<UserRole> roles = new ArrayList<UserRole>();
+									roles.add(UserRole.outside_user);
+									AppController.setActiveRoles(roles);
 
+									loadModules();
 								}
 							});
 				}
@@ -295,5 +294,13 @@ public class AppController implements IPresenter, ValueChangeHandler<String> {
 	}
 
 	// TODO #07:> end
+
+	public List<UserRole> getTestRoles() {
+		ArrayList<UserRole> roles = new ArrayList<UserRole>();
+		roles.add(UserRole.normal_user);
+		roles.add(UserRole.admin_user);
+		roles.add(UserRole.super_admin);
+		return roles;
+	}
 
 }

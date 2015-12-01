@@ -65,7 +65,6 @@ public class MainBarPresenter extends Presenter implements IPresenter {
 	}
 
 	public static MainBarPresenter getInstance() {
-		instance.display.updateMenuBarList(AppController.getActiveRoles());
 		return instance;
 	}
 
@@ -73,6 +72,7 @@ public class MainBarPresenter extends Presenter implements IPresenter {
 	public void go(HasWidgets container) {
 		container.clear();
 		container.add(display.asWidget());
+		display.updateMenuBarList(AppController.getActiveRoles());
 	}
 
 	@Override
@@ -113,10 +113,8 @@ public class MainBarPresenter extends Presenter implements IPresenter {
 				@Override
 				public void onClick(ClickEvent event) {
 					// Window.alert("sdfdsfadsf");
-					UsrLoginInfo uli = UsrLoginInfo.getTestLogin();
 
-					display.updateMenuBarList(uli.getRoles());
-					eventBus.fireEvent(new LoginEvent(uli.getRoles()));
+					eventBus.fireEvent(new LoginEvent());
 				}
 			});
 		}

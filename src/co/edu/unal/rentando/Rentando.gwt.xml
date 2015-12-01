@@ -20,9 +20,9 @@
 	
 	<!-- Specify the app entry point class. -->
 	<entry-point class='co.edu.unal.rentando.client.Rentando' />
-
+	<inherits name="com.google.gwt.uibinder.UiBinder"/>
 	<!-- Specify the paths for translatable code -->
-	<source path='client' />
+	<source path='client' /> 	
 	<source path='shared' />
 
 	<!-- allow Super Dev Mode -->

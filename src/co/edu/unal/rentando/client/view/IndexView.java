@@ -5,48 +5,52 @@ import java.util.List;
 
 import co.edu.unal.rentando.client.presenter.IndexPresenter;
 
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class IndexView extends Composite implements IndexPresenter.Display {
 
-	List<Button> tabButtons;
-	HorizontalPanel tabMenu;
-	HorizontalPanel pageHolder;
-	VerticalPanel container;
 	List<Widget> views;
 	int selectedTab;
+	TabLayoutPanel tabPanel;
 
 	public IndexView() {
-		tabMenu = new HorizontalPanel();
-		pageHolder = new HorizontalPanel();
-		container = new VerticalPanel();
-		tabButtons = new ArrayList<>();
+		tabPanel = new TabLayoutPanel(2.5,Unit.EM);
+		tabPanel.setAnimationDuration(1000);
+	    tabPanel.getElement().getStyle().setMarginBottom(10.0, Unit.PX);
+	    tabPanel.ensureDebugId("cwTabPanel");
 		// ***********************
-		
-		container.add(tabMenu);
-		container.add(pageHolder);
 	}
 
 	@Override
 	public void setUpTab(List<Widget> views, List<String> labels) {
 		if (views == null) {
-			return;
+			Window.alert("Views Null");
+			views = new ArrayList<Widget>();
+			views.add(new Button("No hay nada "));
+			labels = new ArrayList<String>();
+			labels.add("Error");
 		}
 		Button btn;
 		this.views = views;
 		for (int i = 0; i < views.size(); i++) {
-			btn = new Button(labels.get(i));
-			btn.addClickHandler(new TabClickListener(i));
-			btn.getElement().addClassName("tab-btn");
-			tabButtons.add(btn);
-			tabMenu.add(btn);
+			tabPanel.add(views.get(i), labels.get(i));
+//			LayoutPanel p = new LayoutPanel();
+//			p.setHeight("500px");
+//			p.setWidth("1000px");
+//			p.getElement().setPropertyString("background", "red");
+//			tabPanel.add(p, labels.get(i));			
 		}
 		if (views.size() > 0 ) {
 			setSelectedTab(0);
@@ -54,24 +58,14 @@ public class IndexView extends Composite implements IndexPresenter.Display {
 	}
 
 	public void setSelectedTab(int index) {
-//		if (index == selectedTab) {
-//			return;
-//		}
-		tabButtons.get(selectedTab).getElement().removeClassName("tab-btn.selected");
-		this.selectedTab = index;
-		tabButtons.get(selectedTab).getElement().addClassName("tab-btn.selected");
-		showCurrentView();
-	}
-
-	private void showCurrentView() {
-		pageHolder.clear();
-		pageHolder.add(views.get(selectedTab));
+		
+		tabPanel.selectTab(index);
 	}
 
 	@Override
 	public Widget asWidget() {
 		// TODO Auto-generated method stub
-		return container;
+		return tabPanel.getTabWidget(4);
 	}
 
 	class TabClickListener implements ClickHandler {

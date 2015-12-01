@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import co.edu.unal.rentando.client.RentandoServiceAsync;
+import co.edu.unal.rentando.client.event.ViewProfileEvent;
 import co.edu.unal.rentando.shared.CarInfo;
 import co.edu.unal.rentando.shared.UserInfo;
 
@@ -99,6 +100,7 @@ public class AdminCarPresenter extends Presenter implements IPresenter {
 								case UPD_OK:
 									res = "El auto ha sido guardado";
 									display.transactionDone();
+									eventBus.fireEvent(new ViewProfileEvent());
 									break;
 								case UPD_REPEATED:
 									res = "Un auto con esas placas ya existe.";
