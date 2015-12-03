@@ -1,6 +1,6 @@
 package co.edu.unal.rentando.shared.many2many.ofy;
 
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 import co.edu.unal.rentando.shared.RentInfo;
@@ -12,21 +12,23 @@ import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Ignore;
-
+import com.googlecode.objectify.annotation.Load;
 
 @Entity
 public class OfyCar implements ICar {
 
-	@Id private String id;
+	@Id
+	private String id;
 	private String pictURL;
 	private String brand;
 	private String reference;
 	private String description;
 	private String price;
+	@Load
 	private List<Ref<IRent>> refRentals;
-	@Ignore private List<IRent> rentals;
-	
-	
+	@Ignore
+	private List<IRent> rentals;
+
 	@Override
 	public void setId(String id) {
 		// TODO Auto-generated method stub
@@ -101,33 +103,30 @@ public class OfyCar implements ICar {
 
 	@Override
 	public boolean isAvailable(RentalDate rent) {
-		for (IRent ref : rentals) {
-//			Date 7
-		}
+
 		return false;
 	}
-	// TODO Hacer que funcione la parte de añadir rentas a la lista.
+
 	@Override
 	public synchronized void doRent(IRent rent) {
-		// TODO Auto-generated method stub
-//		for (RentInfo current : 6) {
-//			if (!current.getInitialDate().equals(rent.getInitialDate())) {
-//				
-//			}else{
-//				System.out.println("Hay un solape de fechas.");
-//			}
-//			 
-//		}
-//		
-//		if (rentals.indexOf(rent) != -1) {
-//			rentals.add(rent);
-//			System.out.println("Objeto añadido");
-//		}
+		refRentals.add(Ref.create(rent));
+		rentals.add(rent);
 	}
 
 	@Override
 	public List<IRent> getRentals() {
-		// TODO Auto-generated method stub
+		if (rentals != null && refRentals != null) {
+			if (rentals.size() != refRentals.size()) {
+				rentals.clear();
+				for (Ref<IRent> ref : refRentals) {
+					rentals.add(ref.get());
+				}
+			}
+		}
+		else{
+			rentals = new ArrayList<IRent>();
+			refRentals = new ArrayList<Ref<IRent>>();
+		}
 		return rentals;
 	}
 
@@ -150,7 +149,7 @@ public class OfyCar implements ICar {
 	@Override
 	public void setRentals(List<IRent> list) {
 		this.rentals = list;
-		
+
 	}
 
 }

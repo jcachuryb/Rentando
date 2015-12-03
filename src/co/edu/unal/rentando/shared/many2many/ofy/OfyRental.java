@@ -51,7 +51,7 @@ public class OfyRental implements IRent {
 	}
 
 	@Override
-	public Date getInitialDate() {
+	public Date getInitDate() {
 		// TODO Auto-generated method stub
 		return this.init;
 	}

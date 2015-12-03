@@ -15,7 +15,7 @@ public interface IRent {
 
 	void setInitialDate(Date initDate);
 
-	Date getInitialDate();
+	Date getInitDate();
 
 	void setDueDate(Date initDate);
 

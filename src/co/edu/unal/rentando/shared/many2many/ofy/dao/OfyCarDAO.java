@@ -23,7 +23,7 @@ public class OfyCarDAO implements ICarDAO {
 
 	@Override
 	public ICar loadCar(String id) {
-		Key<ICar> key = Key.create(ICar.class, id);
+		Key<OfyCar> key = Key.create(OfyCar.class, id);
 		return ofy().load().key(key).now();
 	}
 
@@ -36,14 +36,14 @@ public class OfyCarDAO implements ICarDAO {
 
 	@Override
 	public void removeCar(String id) {
-		Key<ICar> key = Key.create(ICar.class, id);
+		Key<OfyCar> key = Key.create(OfyCar.class, id);
 		ofy().delete().key(key).now();
 
 	}
 
 	@Override
 	public Boolean carExists(String id) {
-		Key<ICar> key = Key.create(ICar.class, id);
+		Key<OfyCar> key = Key.create(OfyCar.class, id);
 		return ofy().load().key(key).now() != null;
 	}
 

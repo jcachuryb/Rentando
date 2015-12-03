@@ -31,6 +31,7 @@ import co.edu.unal.rentando.shared.many2many.IProfileInfo;
 import co.edu.unal.rentando.shared.many2many.IRent;
 import co.edu.unal.rentando.shared.many2many.IUsrLogin;
 import co.edu.unal.rentando.shared.many2many.IUsrLogin.UserRole;
+import co.edu.unal.rentando.shared.many2many.ofy.OfyCar;
 import co.edu.unal.rentando.shared.many2many.ofy.dao.DAOHelper;
 
 import com.google.appengine.api.users.User;
@@ -289,6 +290,15 @@ public class RentandoServiceImpl extends RemoteServiceServlet implements
 		return newList;
 	}
 
+	private List<RentInfo> getRentInfoList(List<IRent> list) {
+		List<RentInfo> newList = new ArrayList<RentInfo>();
+		for (IRent info : list) {
+			newList.add(convertToRentInfo(info));
+		}
+
+		return newList;
+	}
+
 	private UserInfo converTotUserInfo(IProfileInfo info) {
 		UserInfo userInfo = new UserInfo();
 		userInfo.setEmail(info.getId());
@@ -333,7 +343,7 @@ public class RentandoServiceImpl extends RemoteServiceServlet implements
 	private RentInfo convertToRentInfo(IRent rent) {
 		RentInfo rentInfo = new RentInfo();
 		rentInfo.setId(rent.getId());
-		rentInfo.setInitDate(rent.getInitialDate());
+		rentInfo.setInitDate(rent.getInitDate());
 		rentInfo.setDueDate(rent.getDueDate());
 		rentInfo.setCar(convertToCarInfo(rent.getCar()));
 
@@ -442,19 +452,52 @@ public class RentandoServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public String saveRent(RentInfo info) {
+	public synchronized String saveRent(RentInfo info) {
+		CarInfo car = info.getCar();
+		ICar carInfo = daoHelper.getCarDao().loadCar(car.getId());
+		List<IRent> rentals = carInfo.getRentals() == null ? new ArrayList<IRent>(): carInfo.getRentals();
+		boolean validDates = true;
+		for (IRent rent : rentals) {
+			if (!info.getInitDate().after(rent.getDueDate())) {
+				if (!(info.getInitDate().before(rent.getInitDate()) && info
+						.getDueDate().before(rent.getInitDate()))) {
+					validDates = false;
+					break;
+				}
+			} else {
+				if (info.getInitDate().equals(rent.getDueDate())) {
+					validDates = false;
+					break;
+				}
+			}
+		}
+		if (validDates) {
+			try {
+				IRent nRent = convertToIRent(info);
+				daoHelper.getRentDao().saveRent(nRent);
+				carInfo.doRent(nRent);
+				daoHelper.getCarDao().saveCar(carInfo);
+				return "Success";
+			} catch (Exception e) {
+				return "Error";
+			}
+		}
 		// TODO Auto-generated method stub
-		return null;
+		return "Invalid";
 	}
 
 	@Override
 	public RentInfo loadRent(String id) {
-		// TODO Auto-generated method stub
-		return null;
+		IRent rent = daoHelper.getRentDao().loadRent(id);
+		RentInfo info = convertToRentInfo(rent); 
+		return info;
 	}
 
 	@Override
-	public List<RentInfo> fetchCarAssocRents(CarInfo car) {
+	public List<RentInfo> fetchCarAssocRents(CarInfo info) {
+		ICar car = daoHelper.getCarDao().loadCar(info.getId());
+		List<IRent> rentals = car.getRentals();
+
 		// TODO Auto-generated method stub
 		return null;
 	}
