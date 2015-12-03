@@ -4,23 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import co.edu.unal.rentando.client.AppController;
+import co.edu.unal.rentando.client.behavior.RoleChange;
 import co.edu.unal.rentando.client.presenter.MainBarPresenter;
-import co.edu.unal.rentando.client.presenter.MainBarPresenter.MenuItemLists;
 import co.edu.unal.rentando.client.presenter.MainBarPresenter.MenuItemType;
 import co.edu.unal.rentando.shared.many2many.IUsrLogin.UserRole;
 
-import com.google.gwt.dev.asm.Label;
+import com.google.gwt.aria.client.Role;
 import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.Widget;
 
-public class MainView extends Composite implements MainBarPresenter.Display {
+public class MainView extends Composite implements MainBarPresenter.Display, RoleChange  {
 
 	public HTML appName;
 	public List<MenuBarItem> mainMenu = new ArrayList<>();;
@@ -33,6 +30,8 @@ public class MainView extends Composite implements MainBarPresenter.Display {
 		mainMenu.add(new MenuBarItem(MenuItemType.INICIO));
 		mainMenu.add(new MenuBarItem(MenuItemType.PERFIL));
 		mainMenu.add(new MenuBarItem(MenuItemType.USUARIOS));
+		mainMenu.add(new MenuBarItem(MenuItemType.ADMIN));
+		mainMenu.add(new MenuBarItem(MenuItemType.SUPERADMIN));
 		mainMenu.add(new MenuBarItem(MenuItemType.SALIR));
 
 		selected = lookForItem(MenuItemType.INICIO);
@@ -40,7 +39,6 @@ public class MainView extends Composite implements MainBarPresenter.Display {
 		bar.add(appName);
 		updateMenuList();
 		bar.add(menuList);
-		updateMenuBarList(AppController.getActiveRoles());
 	}
 
 	private void updateMenuList() {
@@ -149,6 +147,18 @@ public class MainView extends Composite implements MainBarPresenter.Display {
 	}
 
 	@Override
+	public HasClickHandlers getAdminButton() {
+		// TODO Auto-generated method stub
+		return lookForItem(MenuItemType.ADMIN);
+	}
+	
+	@Override
+	public HasClickHandlers getSuperAdminButton() {
+		// TODO Auto-generated method stub
+		return lookForItem(MenuItemType.SUPERADMIN);
+	}
+	
+	@Override
 	public Widget asWidget() {
 		return bar;
 	}
@@ -172,16 +182,22 @@ public class MainView extends Composite implements MainBarPresenter.Display {
 			hideMenuItem(MenuItemType.USUARIOS);
 			hideMenuItem(MenuItemType.SALIR);
 			hideMenuItem(MenuItemType.PERFIL);
+			hideMenuItem(MenuItemType.ADMIN);
+			hideMenuItem(MenuItemType.SUPERADMIN);
 			showMenuItem(MenuItemType.ENTRAR);
 			return;
 		}
 		hideMenuItem(MenuItemType.ENTRAR);
-		showMenuItem(MenuItemType.INICIO);
 		showMenuItem(MenuItemType.PERFIL);
+		if (roles.contains(UserRole.normal_user)) {
+			showMenuItem(MenuItemType.INICIO);
+		}
 		if (roles.contains(UserRole.admin_user)) {
 			showMenuItem(MenuItemType.USUARIOS);
-		} else {
-			hideMenuItem(MenuItemType.ENTRAR);
+			showMenuItem(MenuItemType.ADMIN);
+		}
+		if (roles.contains(UserRole.super_admin)) {
+			showMenuItem(MenuItemType.SUPERADMIN);
 		}
 		showMenuItem(MenuItemType.SALIR);
 	}
@@ -196,6 +212,11 @@ public class MainView extends Composite implements MainBarPresenter.Display {
 
 	private void setMenuItemVisibility(MenuItemType type, boolean val) {
 		lookForItem(type).setVisible(val);
+	}
+
+	@Override
+	public void onRoleChange(List<UserRole> roles) {
+		updateMenuBarList(roles);
 	}
 
 }

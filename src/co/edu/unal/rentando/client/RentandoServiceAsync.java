@@ -6,6 +6,7 @@ import co.edu.unal.rentando.shared.CarInfo;
 import co.edu.unal.rentando.shared.ExtraInfo;
 import co.edu.unal.rentando.shared.LoginInfo;
 import co.edu.unal.rentando.shared.NormalUserInfo;
+import co.edu.unal.rentando.shared.RentInfo;
 import co.edu.unal.rentando.shared.UserInfo;
 import co.edu.unal.rentando.shared.UsrLoginInfo;
 
@@ -49,8 +50,9 @@ public interface RentandoServiceAsync {
 	void saveLoginInfo(UsrLoginInfo info, AsyncCallback<String> callback);
 
 	void fetchAllLogins(AsyncCallback<List<UsrLoginInfo>> callback);
-	
-	void saveLoginInfoBatch(List<UsrLoginInfo> changes, AsyncCallback<String> callback);
+
+	void saveLoginInfoBatch(List<UsrLoginInfo> changes,
+			AsyncCallback<String> callback);
 
 	// String saveSeveralLoginInfo(List<usrLoginInfo> infoList);
 
@@ -63,7 +65,14 @@ public interface RentandoServiceAsync {
 	void fetchAllNormalUsers(AsyncCallback<List<NormalUserInfo>> callback);
 
 	void getExtraInfo(String id, AsyncCallback<ExtraInfo> callback);
-	
+
 	void createUser(UsrLoginInfo info, AsyncCallback<UsrLoginInfo> callback);
 
+	// RentInfo Server functions *******
+
+	void saveRent(RentInfo info, AsyncCallback<String> callback);
+
+	void loadRent(String id, AsyncCallback<RentInfo> callback);
+
+	void fetchCarAssocRents(CarInfo car, AsyncCallback<List<RentInfo>> callback);
 }

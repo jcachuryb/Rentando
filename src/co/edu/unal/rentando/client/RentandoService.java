@@ -6,6 +6,7 @@ import co.edu.unal.rentando.shared.CarInfo;
 import co.edu.unal.rentando.shared.ExtraInfo;
 import co.edu.unal.rentando.shared.LoginInfo;
 import co.edu.unal.rentando.shared.NormalUserInfo;
+import co.edu.unal.rentando.shared.RentInfo;
 import co.edu.unal.rentando.shared.UserInfo;
 import co.edu.unal.rentando.shared.UsrLoginInfo;
 
@@ -35,25 +36,25 @@ public interface RentandoService extends RemoteService {
 
 	List<CarInfo> fetchCars();
 
-	// Profile Server functions
+	// Profile Server functions *******
 
 	UserInfo getUserInfo(String id);
 
 	String saveUserInfo(UserInfo info);
 
-	// UsrLoginInfo Server functions
+	// UsrLoginInfo Server functions *******
 
 	UsrLoginInfo getLoginInfo(String id);
 
 	String saveLoginInfo(UsrLoginInfo info);
 
 	List<UsrLoginInfo> fetchAllLogins();
-	
+
 	String saveLoginInfoBatch(List<UsrLoginInfo> changes);
 
 	// String saveSeveralLoginInfo(List<usrLoginInfo> infoList);
 
-	// NormalUser Server functions
+	// NormalUser Server functions *******
 
 	NormalUserInfo getNormalUser(String id);
 
@@ -62,7 +63,15 @@ public interface RentandoService extends RemoteService {
 	List<NormalUserInfo> fetchAllNormalUsers();
 
 	ExtraInfo getExtraInfo(String id);
-	
+
 	UsrLoginInfo createUser(UsrLoginInfo info);
+
+	// RentInfo Server functions *******
+	
+	String saveRent(RentInfo info);
+	
+	RentInfo loadRent(String id);
+	
+	List<RentInfo> fetchCarAssocRents(CarInfo car);
 
 }

@@ -1,12 +1,17 @@
 package co.edu.unal.rentando.shared.many2many.ofy;
 
+import java.util.Date;
 import java.util.List;
 
 import co.edu.unal.rentando.shared.RentInfo;
+import co.edu.unal.rentando.shared.RentalDate;
 import co.edu.unal.rentando.shared.many2many.ICar;
+import co.edu.unal.rentando.shared.many2many.IRent;
 
+import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Ignore;
 
 
 @Entity
@@ -18,7 +23,8 @@ public class OfyCar implements ICar {
 	private String reference;
 	private String description;
 	private String price;
-	private List<RentInfo> rentals;
+	private List<Ref<IRent>> refRentals;
+	@Ignore private List<IRent> rentals;
 	
 	
 	@Override
@@ -93,28 +99,34 @@ public class OfyCar implements ICar {
 		return this.price;
 	}
 
-	
+	@Override
+	public boolean isAvailable(RentalDate rent) {
+		for (IRent ref : rentals) {
+//			Date 7
+		}
+		return false;
+	}
 	// TODO Hacer que funcione la parte de añadir rentas a la lista.
 	@Override
-	public synchronized void doRent(RentInfo rent) {
+	public synchronized void doRent(IRent rent) {
 		// TODO Auto-generated method stub
-		for (RentInfo current : rentals) {
-			if (!current.getInitialDate().equals(rent.getInitialDate())) {
-				
-			}else{
-				System.out.println("Hay un solape de fechas.");
-			}
-			 
-		}
-		
-		if (rentals.indexOf(rent) != -1) {
-			rentals.add(rent);
-			System.out.println("Objeto añadido");
-		}
+//		for (RentInfo current : 6) {
+//			if (!current.getInitialDate().equals(rent.getInitialDate())) {
+//				
+//			}else{
+//				System.out.println("Hay un solape de fechas.");
+//			}
+//			 
+//		}
+//		
+//		if (rentals.indexOf(rent) != -1) {
+//			rentals.add(rent);
+//			System.out.println("Objeto añadido");
+//		}
 	}
 
 	@Override
-	public List<RentInfo> getRentals() {
+	public List<IRent> getRentals() {
 		// TODO Auto-generated method stub
 		return rentals;
 	}
@@ -136,7 +148,7 @@ public class OfyCar implements ICar {
 	}
 
 	@Override
-	public void setRentals(List<RentInfo> list) {
+	public void setRentals(List<IRent> list) {
 		this.rentals = list;
 		
 	}

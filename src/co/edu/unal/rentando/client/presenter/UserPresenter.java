@@ -3,6 +3,7 @@ package co.edu.unal.rentando.client.presenter;
 import java.util.List;
 
 import co.edu.unal.rentando.client.RentandoServiceAsync;
+import co.edu.unal.rentando.client.view.CarListView;
 import co.edu.unal.rentando.shared.CarInfo;
 import co.edu.unal.rentando.shared.RentInfo;
 
@@ -14,15 +15,16 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
 
-public class UserPresenter extends Presenter implements IPresenter {
+public class UserPresenter extends CarListPresenter implements IPresenter {
 	public interface Display {
 		void setRentInfo(RentInfo rent);
 
-		void setCarList(List<CarInfo> list);
 
 		RentInfo getRenInfo();
 
 		HasClickHandlers getRentButton();
+
+		CarListView getSuperView();
 
 		Widget asWidget();
 	}
@@ -31,7 +33,7 @@ public class UserPresenter extends Presenter implements IPresenter {
 
 	public UserPresenter(RentandoServiceAsync rpcService,
 			HandlerManager eventBus, Display view) {
-		super(rpcService, eventBus);
+		super(rpcService, eventBus, view.getSuperView());
 		display = view;
 	}
 
@@ -43,11 +45,13 @@ public class UserPresenter extends Presenter implements IPresenter {
 
 	@Override
 	public void bind() {
-		// TODO Auto-generated method stub
+		super.bind();
+
 		display.getRentButton().addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
+				
 				Window.alert("New Rent");
 
 			}

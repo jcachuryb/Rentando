@@ -18,7 +18,7 @@ public class OfyRental implements IRent {
 	private String id;
 	private Ref<ICar> car;
 	private Date init;
-	private Integer days;
+	private Date due;
 
 	@Override
 	public void setId(String id) {
@@ -57,30 +57,29 @@ public class OfyRental implements IRent {
 	}
 
 	@Override
-	public void setTotalDays(Integer days) {
-		// TODO Auto-generated method stub
-		this.days = days;
-	}
-
-	@Override
-	public Integer getTotalDays() {
-		// TODO Auto-generated method stub
-		return this.days;
-	}
-
-	@Override
 	public void setRentalDateInfo(RentalDate rental) {
 		// TODO Auto-generated method stub
 		setInitialDate(rental.getInitDate());
-		setTotalDays(rental.getTotalDays());
 	}
 
 	@Override
 	public RentalDate getRentalDate() {
 		RentalDate r = new RentalDate();
-		r.setInitDate(this.init);
-		r.setTotalDays(this.days);
+		r.setInitDate(init);
+		r.setDueDate(due);
 		return r;
+	}
+
+	@Override
+	public void setDueDate(Date dueDate) {
+		// TODO Auto-generated method stub
+		this.due = dueDate;
+	}
+
+	@Override
+	public Date getDueDate() {
+		// TODO Auto-generated method stub
+		return due;
 	}
 
 }

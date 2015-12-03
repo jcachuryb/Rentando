@@ -10,9 +10,9 @@ public class NormalUserInfo implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private String email;
-	
+
 	private ExtraInfo extra;
-	
+
 	private UserInfo user;
 
 	public String getEmail() {
@@ -38,8 +38,5 @@ public class NormalUserInfo implements Serializable {
 	public void setUser(UserInfo user) {
 		this.user = user;
 	}
-	
-	
-	
-	
+
 }

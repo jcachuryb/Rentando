@@ -5,6 +5,7 @@ import com.google.inject.Injector;
 import co.edu.unal.rentando.server.util.ICarProvider;
 import co.edu.unal.rentando.server.util.INormalUserProvider;
 import co.edu.unal.rentando.server.util.IProfileInfoProvider;
+import co.edu.unal.rentando.server.util.IRentProvider;
 import co.edu.unal.rentando.server.util.IUsrLoginProvider;
 
 public class ProviderHelper {
@@ -13,6 +14,7 @@ public class ProviderHelper {
 	private IUsrLoginProvider loginProvider;
 	private INormalUserProvider normalUserProvider;
 	private IProfileInfoProvider profileProvider;
+	private IRentProvider rentProvider;
 	private static ProviderHelper instance;
 
 	private ProviderHelper(Injector injector) {
@@ -20,6 +22,7 @@ public class ProviderHelper {
 		loginProvider = injector.getInstance(IUsrLoginProvider.class);
 		normalUserProvider = injector.getInstance(INormalUserProvider.class);
 		profileProvider = injector.getInstance(IProfileInfoProvider.class);
+		rentProvider = injector.getInstance(IRentProvider.class);
 	}
 	
 	public static void initialize(Injector injector){
@@ -48,6 +51,9 @@ public class ProviderHelper {
 		return profileProvider;
 	}
 	
+	public IRentProvider getRentProvider(){
+		return rentProvider;
+	}
 	
 
 }

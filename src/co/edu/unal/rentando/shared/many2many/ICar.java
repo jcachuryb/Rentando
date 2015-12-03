@@ -3,6 +3,7 @@ package co.edu.unal.rentando.shared.many2many;
 import java.util.List;
 
 import co.edu.unal.rentando.shared.RentInfo;
+import co.edu.unal.rentando.shared.RentalDate;
 
 public interface ICar {
 	void setId(String id);
@@ -29,11 +30,13 @@ public interface ICar {
 
 	String getRentalPrice();
 
-	void  doRent(RentInfo rent);
-
-	List<RentInfo> getRentals();
+	boolean isAvailable(RentalDate rent);
 	
-	void setRentals(List<RentInfo> list);
+	void  doRent(IRent rent);
+
+	List<IRent> getRentals();
+	
+	void setRentals(List<IRent> list);
 
 	void removeRental(RentInfo value);
 

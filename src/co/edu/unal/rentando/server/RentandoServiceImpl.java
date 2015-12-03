@@ -22,11 +22,13 @@ import co.edu.unal.rentando.shared.CarInfo;
 import co.edu.unal.rentando.shared.ExtraInfo;
 import co.edu.unal.rentando.shared.LoginInfo;
 import co.edu.unal.rentando.shared.NormalUserInfo;
+import co.edu.unal.rentando.shared.RentInfo;
 import co.edu.unal.rentando.shared.UserInfo;
 import co.edu.unal.rentando.shared.UsrLoginInfo;
 import co.edu.unal.rentando.shared.many2many.ICar;
 import co.edu.unal.rentando.shared.many2many.INormalUser;
 import co.edu.unal.rentando.shared.many2many.IProfileInfo;
+import co.edu.unal.rentando.shared.many2many.IRent;
 import co.edu.unal.rentando.shared.many2many.IUsrLogin;
 import co.edu.unal.rentando.shared.many2many.IUsrLogin.UserRole;
 import co.edu.unal.rentando.shared.many2many.ofy.dao.DAOHelper;
@@ -232,14 +234,7 @@ public class RentandoServiceImpl extends RemoteServiceServlet implements
 				&& carInfo.isNew()) {
 			return AdminCarPresenter.UPD_REPEATED;
 		}
-		ICar car = providers.getCarProvider().getNewCar();
-		car.setId(carInfo.getId());
-		car.setBrand(carInfo.getBrand());
-		car.setPicture(carInfo.getPictURL());
-		car.setDescription(carInfo.getDescription());
-		car.setReference(carInfo.getReference());
-		car.setRentalPrice(carInfo.getPrice());
-		car.setRentals(carInfo.getRentals());
+		ICar car = convertToICar(carInfo);
 		try {
 			this.daoHelper.getCarDao().saveCar(car);
 			return AdminCarPresenter.UPD_OK;
@@ -285,6 +280,15 @@ public class RentandoServiceImpl extends RemoteServiceServlet implements
 
 	// TODO #11:> end
 
+	private List<IRent> getIRentList(List<RentInfo> list) {
+		List<IRent> newList = new ArrayList<IRent>();
+		for (RentInfo info : list) {
+			newList.add(convertToIRent(info));
+		}
+
+		return newList;
+	}
+
 	private UserInfo converTotUserInfo(IProfileInfo info) {
 		UserInfo userInfo = new UserInfo();
 		userInfo.setEmail(info.getId());
@@ -326,6 +330,50 @@ public class RentandoServiceImpl extends RemoteServiceServlet implements
 		return loginInfo;
 	}
 
+	private RentInfo convertToRentInfo(IRent rent) {
+		RentInfo rentInfo = new RentInfo();
+		rentInfo.setId(rent.getId());
+		rentInfo.setInitDate(rent.getInitialDate());
+		rentInfo.setDueDate(rent.getDueDate());
+		rentInfo.setCar(convertToCarInfo(rent.getCar()));
+
+		return rentInfo;
+	}
+
+	private IRent convertToIRent(RentInfo rent) {
+		IRent rentInfo = providers.getRentProvider().getNewRent();
+		rentInfo.setId(rent.getId());
+		rentInfo.setInitialDate(rent.getInitDate());
+		rentInfo.setDueDate(rent.getDueDate());
+		rentInfo.setCar(convertToICar(rent.getCar()));
+
+		return rentInfo;
+	}
+
+	private CarInfo convertToCarInfo(ICar car) {
+		CarInfo info = new CarInfo();
+		info.setId(car.getId());
+		info.setBrand(car.getBrand());
+		info.setPictURL(car.getPicture());
+		info.setDescription(car.getDescription());
+		info.setReference(car.getReference());
+		info.setPrice(car.getRentalPrice());
+
+		return info;
+	}
+
+	private ICar convertToICar(CarInfo car) {
+		ICar info = providers.getCarProvider().getNewCar();
+		info.setId(car.getId());
+		info.setBrand(car.getBrand());
+		info.setPicture(car.getPictURL());
+		info.setDescription(car.getDescription());
+		info.setReference(car.getReference());
+		info.setRentalPrice(car.getPrice());
+		info.setRentals(getIRentList(car.getRentals()));
+		return info;
+	}
+
 	@Override
 	public UserInfo getUserInfo(String id) {
 		// TODO Auto-generated method stub
@@ -357,7 +405,7 @@ public class RentandoServiceImpl extends RemoteServiceServlet implements
 		}
 		return "Listo";
 	}
-	
+
 	@Override
 	public List<UsrLoginInfo> fetchAllLogins() {
 		ArrayList<UsrLoginInfo> usrList = new ArrayList<UsrLoginInfo>();
@@ -389,6 +437,24 @@ public class RentandoServiceImpl extends RemoteServiceServlet implements
 
 	@Override
 	public ExtraInfo getExtraInfo(String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String saveRent(RentInfo info) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public RentInfo loadRent(String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<RentInfo> fetchCarAssocRents(CarInfo car) {
 		// TODO Auto-generated method stub
 		return null;
 	}

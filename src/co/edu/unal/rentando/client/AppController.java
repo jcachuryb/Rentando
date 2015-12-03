@@ -3,24 +3,28 @@ package co.edu.unal.rentando.client;
 import java.util.ArrayList;
 import java.util.List;
 
-import co.edu.unal.rentando.client.event.IndexEvent;
-import co.edu.unal.rentando.client.event.IndexEventHandler;
+import co.edu.unal.rentando.client.behavior.RoleChange;
+import co.edu.unal.rentando.client.event.AdminCarConsoleEvent;
+import co.edu.unal.rentando.client.event.AdminCarConsoleEventHandler;
 import co.edu.unal.rentando.client.event.LoginEvent;
 import co.edu.unal.rentando.client.event.LoginEventHandler;
+import co.edu.unal.rentando.client.event.SuperAdminEvent;
+import co.edu.unal.rentando.client.event.SuperAdminEventHandler;
+import co.edu.unal.rentando.client.event.UserViewEvent;
+import co.edu.unal.rentando.client.event.UserViewEventHandler;
 import co.edu.unal.rentando.client.event.ViewProfileEvent;
 import co.edu.unal.rentando.client.event.ViewProfileEventHandler;
+import co.edu.unal.rentando.client.event.ViewUsersEvent;
+import co.edu.unal.rentando.client.event.ViewUsersEventHandler;
 import co.edu.unal.rentando.client.presenter.AdminCarPresenter;
 import co.edu.unal.rentando.client.presenter.IPresenter;
-import co.edu.unal.rentando.client.presenter.IndexPresenter;
 import co.edu.unal.rentando.client.presenter.MainBarPresenter;
 import co.edu.unal.rentando.client.presenter.SuperAdminConsolePresenter;
 import co.edu.unal.rentando.client.presenter.UserPresenter;
 import co.edu.unal.rentando.client.view.AdminCarView;
-import co.edu.unal.rentando.client.view.IndexView;
 import co.edu.unal.rentando.client.view.MainView;
 import co.edu.unal.rentando.client.view.SuperAdminConsoleView;
 import co.edu.unal.rentando.client.view.UserView;
-import co.edu.unal.rentando.shared.LoginInfo;
 import co.edu.unal.rentando.shared.UsrLoginInfo;
 import co.edu.unal.rentando.shared.many2many.IUsrLogin.UserRole;
 
@@ -35,23 +39,33 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class AppController implements IPresenter, ValueChangeHandler<String> {
+	private ArrayList<RoleChange> rolesObs;
 	private final HandlerManager eventBus;
 	private final RentandoServiceAsync rpcService;
 	private HasWidgets container;
 	private static List<UserRole> activeRoles = new ArrayList<>();
 	private MainBarPresenter mainBarPres;
+	ScrollPanel content;
 
 	public AppController(RentandoServiceAsync rpcService,
 			HandlerManager eventBus) {
 		this.eventBus = eventBus;
 		this.rpcService = rpcService;
+		rolesObs = new ArrayList<RoleChange>();
+		MainView mainBarView = new MainView();
+		rolesObs.add(mainBarView);
 		bind();
 		addActiveRole(UserRole.outside_user);
-		MainBarPresenter.initializeBar(rpcService, eventBus, new MainView());
+		MainBarPresenter.initializeBar(rpcService, eventBus, mainBarView);
 		mainBarPres = MainBarPresenter.getInstance();
+		notifyRoleChanges();
+
+		content = new ScrollPanel();
+		content.setHeight("100%");
 
 	}
 
@@ -75,28 +89,44 @@ public class AppController implements IPresenter, ValueChangeHandler<String> {
 						History.newItem(profile);
 					}
 				});
-		eventBus.addHandler(IndexEvent.TYPE, new IndexEventHandler() {
+		eventBus.addHandler(SuperAdminEvent.TYPE, new SuperAdminEventHandler() {
 
 			@Override
 			public void onSuperAdminView() {
-				History.newItem(index);
+				History.newItem(superadmin);
+			}
+		});
+		eventBus.addHandler(AdminCarConsoleEvent.TYPE,
+				new AdminCarConsoleEventHandler() {
+
+					@Override
+					public void onAdminCarConsole() {
+						History.newItem(admin);
+					}
+				});
+		eventBus.addHandler(ViewUsersEvent.TYPE, new ViewUsersEventHandler() {
+
+			@Override
+			public void onViewUsers() {
+				History.newItem(userlist);
 			}
 		});
 
-	}
+		eventBus.addHandler(UserViewEvent.TYPE, new UserViewEventHandler() {
 
-	private void doLogin(List<UserRole> roles) {
-		setActiveRoles(roles);
-		if (getActiveRoles().size() > 0) {
-			History.newItem(index);
-		}
-		// TODO Figure out what to do next
+			@Override
+			public void onViewUserInterface() {
+				History.newItem(index);
+			}
+		});
 	}
 
 	@Override
 	public void go(HasWidgets container) {
 		Window.alert("Main Go");
 		this.container = container;
+		container.add(mainBarPres.getMainWidget());
+		container.add(content);
 		doLogin();
 		loadModules();
 	}
@@ -124,80 +154,54 @@ public class AppController implements IPresenter, ValueChangeHandler<String> {
 		String token = event.getValue();
 		if (token != null) {
 			IPresenter presenter = null;
-			ArrayList<IPresenter> presenters = new ArrayList<>();
 			if (token.equals(main)) {
 				presenter = MainBarPresenter.getInstance();
-				// presenter = new SuperAdminConsolePresenter(rpcService,
-				// eventBus, new SuperAdminConsoleView());
+			} else if (token.equals(index)) {
+				presenter = new UserPresenter(rpcService, eventBus, new UserView());
 			} else if (token.equals(profile)) {
 
-			} else if (token.equals(index)) {
-				List<String> labels = new ArrayList<>();
-				String label = "";
-				for (UserRole roles : getActiveRoles()) {
-					switch (roles) {
-					case normal_user:
-						// presenters.add(new UserPresenter(
-						// rpcService, eventBus,
-						// new UserView()));
-						presenters.add(new SuperAdminConsolePresenter(
-								rpcService, eventBus,
-								new SuperAdminConsoleView()));
-						label = "Usuario";
-						break;
-					case admin_user:
-						presenters.add(new AdminCarPresenter(rpcService,
-								eventBus, new AdminCarView()));
-						label = "Admin";
-						break;
-					case super_admin:
-						presenters.add(new SuperAdminConsolePresenter(
-								rpcService, eventBus,
-								new SuperAdminConsoleView()));
-						label = "Súper Admin";
-						break;
-					default:
-						Window.alert("No role");
-						break;
-					}
-					labels.add(label);
-				}
-
-				presenter = new IndexPresenter(rpcService, eventBus,
-						new IndexView(), presenters, labels);
-
-			} else if (token.equals(userlist)) {
-				presenter = new SuperAdminConsolePresenter(
-						rpcService, eventBus,
-						new SuperAdminConsoleView());
 			} else if (token.equals(admin)) {
 				presenter = new AdminCarPresenter(rpcService, eventBus,
 						new AdminCarView());
+			} else if (token.equals(userlist)) {
+
+			} else if (token.equals(superadmin)) {
+				presenter = new SuperAdminConsolePresenter(rpcService,
+						eventBus, new SuperAdminConsoleView());
 			}
 
-			if (presenter != null) {
-				presenter.go(container);
+			if (presenter != null && !presenter.equals(mainBarPres)) {
+				content.clear();
+				presenter.go(content);
 			} else {
 				Window.alert("NULLLL");
 			}
 		}
 	}
 
-	public static List<UserRole> getActiveRoles() {
+	public List<UserRole> getActiveRoles() {
 		return activeRoles;
 	}
 
-	public static void addActiveRole(UserRole roles) {
+	public void addActiveRole(UserRole roles) {
 		activeRoles.add(roles);
+		notifyRoleChanges();
 	}
 
 	public static void clearActiveRoles() {
 		activeRoles.clear();
 	}
 
-	public static void setActiveRoles(List<UserRole> roles) {
+	public void setActiveRoles(List<UserRole> roles) {
 		clearActiveRoles();
 		activeRoles = roles;
+		notifyRoleChanges();
+	}
+
+	public void notifyRoleChanges() {
+		for (RoleChange observer : rolesObs) {
+			observer.onRoleChange(activeRoles);
+		}
 	}
 
 	public final static String login = "login";
@@ -265,8 +269,7 @@ public class AppController implements IPresenter, ValueChangeHandler<String> {
 
 									Window.alert("Usuario cargado:"
 											+ result.toString());
-									AppController.setActiveRoles(result
-											.getRoles());
+									setActiveRoles(result.getRoles());
 
 									loadModules();
 
@@ -277,7 +280,7 @@ public class AppController implements IPresenter, ValueChangeHandler<String> {
 									Window.alert(caught.toString());
 									List<UserRole> roles = new ArrayList<UserRole>();
 									roles.add(UserRole.outside_user);
-									AppController.setActiveRoles(roles);
+									setActiveRoles(roles);
 
 									loadModules();
 								}

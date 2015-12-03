@@ -11,7 +11,7 @@ public class RentalDate implements Serializable {
 
 	private String Id;
 	private Date initDate;
-	private Integer totalDays;
+	private Date dueDate;
 
 	public String getId() {
 		return Id;
@@ -29,12 +29,12 @@ public class RentalDate implements Serializable {
 		this.initDate = initDate;
 	}
 
-	public Integer getTotalDays() {
-		return totalDays;
+	public Date getDueDate() {
+		return dueDate;
 	}
 
-	public void setTotalDays(Integer totalDays) {
-		this.totalDays = totalDays;
+	public void setDueDate(Date dueDate) {
+		this.dueDate = dueDate;
 	}
 
 }

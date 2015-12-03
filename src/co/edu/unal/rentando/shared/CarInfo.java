@@ -111,14 +111,15 @@ public class CarInfo implements Serializable {
 		return serialVersionUID;
 	}
 
-	public void fillOutCar(ICar iCar) {
-		this.setId(iCar.getId());
-		this.setBrand(iCar.getBrand());
-		this.setPictURL(iCar.getPicture());
-		this.setDescription(iCar.getDescription());
-		this.setReference(iCar.getReference());
-		this.setPrice(iCar.getRentalPrice());
-		this.setRentals(iCar.getRentals());
+	public void fillOutCar(ICar car) {
+		this.setId(car.getId());
+		this.setBrand(car.getBrand());
+		this.setPictURL(car.getPicture());
+		this.setDescription(car.getDescription());
+		this.setReference(car.getReference());
+		this.setPrice(car.getRentalPrice());
+//		TODO 
+//		this.setRentals(iCar.getRentals());
 	}
 
 }

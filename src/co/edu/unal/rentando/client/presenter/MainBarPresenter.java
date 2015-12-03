@@ -4,8 +4,10 @@ import java.util.List;
 
 import co.edu.unal.rentando.client.AppController;
 import co.edu.unal.rentando.client.RentandoServiceAsync;
-import co.edu.unal.rentando.client.event.IndexEvent;
+import co.edu.unal.rentando.client.event.AdminCarConsoleEvent;
+import co.edu.unal.rentando.client.event.SuperAdminEvent;
 import co.edu.unal.rentando.client.event.LoginEvent;
+import co.edu.unal.rentando.client.event.UserViewEvent;
 import co.edu.unal.rentando.shared.LoginInfo;
 import co.edu.unal.rentando.shared.UsrLoginInfo;
 import co.edu.unal.rentando.shared.many2many.IUsrLogin.UserRole;
@@ -36,6 +38,10 @@ public class MainBarPresenter extends Presenter implements IPresenter {
 		HasClickHandlers getUsersButton();
 
 		HasClickHandlers getLoginButton();
+
+		HasClickHandlers getAdminButton();
+
+		HasClickHandlers getSuperAdminButton();
 
 		void setSelected(MenuItemType item);
 
@@ -72,7 +78,6 @@ public class MainBarPresenter extends Presenter implements IPresenter {
 	public void go(HasWidgets container) {
 		container.clear();
 		container.add(display.asWidget());
-		display.updateMenuBarList(AppController.getActiveRoles());
 	}
 
 	@Override
@@ -82,7 +87,7 @@ public class MainBarPresenter extends Presenter implements IPresenter {
 	}
 
 	public static enum MenuItemType {
-		INICIO, PERFIL, USUARIOS, SALIR, ENTRAR, ADMIN;
+		INICIO, PERFIL, USUARIOS, SALIR, ENTRAR, ADMIN, SUPERADMIN;
 	}
 
 	public static enum MenuItemLists {
@@ -113,7 +118,7 @@ public class MainBarPresenter extends Presenter implements IPresenter {
 				@Override
 				public void onClick(ClickEvent event) {
 					// Window.alert("sdfdsfadsf");
-
+					display.setSelected(MenuItemType.INICIO);
 					eventBus.fireEvent(new LoginEvent());
 				}
 			});
@@ -147,7 +152,7 @@ public class MainBarPresenter extends Presenter implements IPresenter {
 				@Override
 				public void onClick(ClickEvent event) {
 					display.setSelected(MenuItemType.INICIO);
-					eventBus.fireEvent(new IndexEvent());
+					eventBus.fireEvent(new UserViewEvent());
 				}
 			});
 		}
@@ -159,6 +164,28 @@ public class MainBarPresenter extends Presenter implements IPresenter {
 				public void onClick(ClickEvent event) {
 					display.setSelected(MenuItemType.USUARIOS);
 					Window.alert("Users");
+				}
+			});
+		}
+		
+		if (display.getAdminButton() != null) {
+			display.getAdminButton().addClickHandler(new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					display.setSelected(MenuItemType.ADMIN);
+					eventBus.fireEvent(new AdminCarConsoleEvent());
+				}
+			});
+		}
+		
+		if (display.getSuperAdminButton() != null) {
+			display.getSuperAdminButton().addClickHandler(new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					display.setSelected(MenuItemType.SUPERADMIN);
+					eventBus.fireEvent(new SuperAdminEvent());
 				}
 			});
 		}

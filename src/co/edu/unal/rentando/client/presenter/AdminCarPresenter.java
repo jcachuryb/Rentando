@@ -1,11 +1,7 @@
 package co.edu.unal.rentando.client.presenter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import co.edu.unal.rentando.client.RentandoServiceAsync;
-import co.edu.unal.rentando.client.event.ViewProfileEvent;
-import co.edu.unal.rentando.shared.CarInfo;
+import co.edu.unal.rentando.client.view.CarListView;
 import co.edu.unal.rentando.shared.UserInfo;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -17,11 +13,11 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
 
-public class AdminCarPresenter extends Presenter implements IPresenter {
+public class AdminCarPresenter extends CarListPresenter implements IPresenter {
 
 	public AdminCarPresenter(RentandoServiceAsync rpcService,
 			HandlerManager eventBus, Display view) {
-		super(rpcService, eventBus);
+		super(rpcService, eventBus, view.getSuperView());
 		display = view;
 	}
 
@@ -33,32 +29,28 @@ public class AdminCarPresenter extends Presenter implements IPresenter {
 
 		HasClickHandlers getDeleteButton();
 
-		void fillCarList(List<CarInfo> list);
-
-		CarInfo getCurrentcar();
+		CarListView getSuperView();
 
 		void updateCurrentCar();
-
-		void transactionDone();
 
 		Widget asWidget();
 	}
 
 	@Override
 	public void go(HasWidgets container) {
-		fetchCars();
 		bind();
 		container.add(display.asWidget());
 	}
 
 	@Override
 	public void bind() {
+		super.bind();
 		display.getDeleteButton().addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
 				display.updateCurrentCar();
-				rpcService.deleteCar(display.getCurrentcar().getId(),
+				rpcService.deleteCar(getDisplay().getCurrentcar().getId(),
 						new AsyncCallback<String>() {
 
 							@Override
@@ -66,14 +58,14 @@ public class AdminCarPresenter extends Presenter implements IPresenter {
 								switch (result) {
 								case UPD_OK:
 									Window.alert("El auto ha sido borrado.");
-									display.transactionDone();
+									getDisplay().transactionDone();
 									fetchCars();
 									break;
 								default:
-									display.transactionDone();
+									getDisplay().transactionDone();
 									break;
 								}
-								
+
 							}
 
 							@Override
@@ -89,7 +81,7 @@ public class AdminCarPresenter extends Presenter implements IPresenter {
 			@Override
 			public void onClick(ClickEvent event) {
 				display.updateCurrentCar();
-				rpcService.saveCar(display.getCurrentcar(),
+				rpcService.saveCar(getDisplay().getCurrentcar(),
 						new AsyncCallback<String>() {
 
 							@Override
@@ -99,8 +91,8 @@ public class AdminCarPresenter extends Presenter implements IPresenter {
 								switch (result) {
 								case UPD_OK:
 									res = "El auto ha sido guardado";
-									display.transactionDone();
-									eventBus.fireEvent(new ViewProfileEvent());
+									getDisplay().transactionDone();
+									fetchCars();
 									break;
 								case UPD_REPEATED:
 									res = "Un auto con esas placas ya existe.";
@@ -110,8 +102,7 @@ public class AdminCarPresenter extends Presenter implements IPresenter {
 									break;
 								}
 								Window.alert(res);
-								fetchCars();
-								
+
 							}
 
 							@Override
@@ -125,29 +116,12 @@ public class AdminCarPresenter extends Presenter implements IPresenter {
 			}
 		});
 
-		
-
 	}
 
 	@Override
 	public Widget getMainWidget() {
 		// TODO Auto-generated method stub
 		return display.asWidget();
-	}
-
-	public void fetchCars() {
-		rpcService.fetchCars(new AsyncCallback<List<CarInfo>>() {
-
-			@Override
-			public void onSuccess(List<CarInfo> result) {
-				display.fillCarList(result);
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert("Something went wrong fetching the cars.");
-			}
-		});
 	}
 
 	public final static String UPD_OK = "OK";

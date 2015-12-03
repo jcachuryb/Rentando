@@ -17,10 +17,10 @@ public interface IRent {
 
 	Date getInitialDate();
 
-	void setTotalDays(Integer days);
+	void setDueDate(Date initDate);
 
-	Integer getTotalDays();
-
+	Date getDueDate();
+	
 	void setRentalDateInfo(RentalDate rental);
 	
 	RentalDate getRentalDate();
