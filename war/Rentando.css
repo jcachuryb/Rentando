@@ -269,3 +269,9 @@ a:VISITED, a:HOVER {
     font-weight: bold;
     color: #1C0C4F;
 }
+.popup-bill{
+    position: relative;
+    margin: auto;
+    font-size: 13pt;
+    color: #71CA68;
+}

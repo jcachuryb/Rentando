@@ -18,6 +18,7 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -84,7 +85,8 @@ public class UserView extends CarListView implements UserPresenter.Display {
 					+ "</strong> rentado.<br>"
 					+ "La renta va desde <strong>"
 					+ format.format(rent.getInitDate())
-					+ "</strong> hasta <strong>" + format.format(rent.getDueDate()) + "</strong>.</p>");
+					+ "</strong> hasta <strong>"
+					+ format.format(rent.getDueDate()) + "</strong>.</p>");
 		} else {
 			rentButton.setVisible(true);
 			message.setHTML("<p class='rent-message none-rent'><strong>No tienes una renta vigente.</strong><br>"
@@ -137,6 +139,7 @@ public class UserView extends CarListView implements UserPresenter.Display {
 		CarListItem item;
 		DatePicker calendar;
 		Date prevInit, prevDue;
+		HTML bill = new HTML("0");
 
 		Button cancelBtn = new Button("Cancelar");
 
@@ -151,7 +154,7 @@ public class UserView extends CarListView implements UserPresenter.Display {
 			initDate = new DateBox();
 			dueDate = new DateBox();
 			dueDate.setEnabled(false);
-			
+
 			initDate.getElement().setAttribute("placeholder", "Fecha inicio");
 			dueDate.getElement().setAttribute("placeholder", "Fecha fin");
 			car = getCurrentcar();
@@ -166,11 +169,12 @@ public class UserView extends CarListView implements UserPresenter.Display {
 			p.add(dueDate);
 			datePickers.add(p);
 			datePickers.add(calendar);
+			datePickers.add(bill);
 			buttons.add(cancelBtn);
 			buttons.add(rentButton);
 			// ***************************
 			getContainer().add(item.getWidget());
-//			getContainer().add(calendar);
+			// getContainer().add(calendar);
 			getContainer().add(datePickers);
 			getContainer().add(buttons);
 			addDateBoxEvent();
@@ -263,12 +267,26 @@ public class UserView extends CarListView implements UserPresenter.Display {
 						}
 					}
 					dueDate.setValue(prevDue);
+					updateBill();
 				}
 
 			});
 		}
 
+		private void updateBill() {
+			NumberFormat format = NumberFormat.getCurrencyFormat();
+			try {
+				double val = 1;
+				val = Double.parseDouble(car.getPrice())
+						* countDays(initDate.getValue(), dueDate.getValue());
+				bill.setHTML("<span style='color:#C35454'>Total:</span> <br>" + format.format(val));
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+		}
+
 		private void addStyles() {
+			bill.getElement().addClassName("popup-bill");
 			datePickers.getElement().addClassName("popup-calendar-input");
 			// buttons.getElement().addClassName("");
 			//
@@ -335,6 +353,20 @@ public class UserView extends CarListView implements UserPresenter.Display {
 				} while (date.before(to));
 			}
 			return true;
+		}
+
+		public int countDays(Date from, Date to) {
+			if (from.equals(to)) {
+				return 1;
+			}
+			Date date = (Date) from.clone();
+			int counter = 0;
+			do {
+				CalendarUtil.addDaysToDate(date, 1);
+				counter++;
+			} while (date.before(to));
+			counter++;
+			return counter;
 		}
 
 		public static final String BUSY_DATE = "datePickerDayBusy";

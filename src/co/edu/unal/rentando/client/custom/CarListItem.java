@@ -3,6 +3,7 @@ package co.edu.unal.rentando.client.custom;
 import co.edu.unal.rentando.shared.CarInfo;
 
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -23,15 +24,14 @@ public class CarListItem {
 	private final HorizontalPanel panel = new HorizontalPanel();
 
 	public CarListItem() {
-//		panel.getElement().setClassName("xs-col-12");
+		// panel.getElement().setClassName("xs-col-12");
 		image.getElement().addClassName("list-car-image");
 		brand.getElement().addClassName("list-car-brand");
 		ref.getElement().addClassName("list-car-reference");
 		price.getElement().addClassName("list-car-price");
 		description.getElement().addClassName("list-car-description");
 		wrapper.getElement().addClassName("list-car-panel");
-		
-		
+
 	}
 
 	public Image getImage() {
@@ -66,16 +66,21 @@ public class CarListItem {
 		this.price = price;
 	}
 
-	public void setClickHandler(ClickHandler handler){
+	public void setClickHandler(ClickHandler handler) {
 		wrapper.addClickHandler(handler);
 	}
 
 	public void fillCarInfo(CarInfo carInfo) {
+		NumberFormat format = NumberFormat.getCurrencyFormat();
 		image.setUrl(carInfo.getPictURL());
 		brand.setHTML(carInfo.getBrand());
 		ref.setHTML(carInfo.getReference());
 		description.setHTML("<p>" + carInfo.getDescription() + "</p>");
-		price.setHTML(carInfo.getPrice());
+		try {
+			price.setHTML(format.format(Double.parseDouble(carInfo.getPrice())));
+		} catch (Exception e) {
+			price.setHTML((carInfo.getPrice()));
+		}
 	}
 
 	public Widget getWidget() {
@@ -86,7 +91,8 @@ public class CarListItem {
 		panel.add(r1);
 		r1 = new VerticalPanel();
 		r1.getElement().addClassName("list-vert-panel");
-		r1.add(new HTML("<span style='font-size: 14pt; color: #000, font-weight: bold;'>Sobre este auto: </span>"));
+		r1.add(new HTML(
+				"<span style='font-size: 14pt; color: #000, font-weight: bold;'>Sobre este auto: </span>"));
 		r1.add(description);
 		r1.add(price);
 		panel.add(r1);

@@ -85,6 +85,12 @@ public class AdminCarPresenter extends CarListPresenter implements IPresenter {
 					Window.alert("Ingrese un ID");
 					return;
 				}
+				try {
+					Double.parseDouble(getDisplay().getCurrentcar().getPrice());
+				} catch (Exception e) {
+					Window.alert("El valor del precio es incorrecto");
+					return;
+				}
 				rpcService.saveCar(getDisplay().getCurrentcar(),
 						new AsyncCallback<String>() {
 
