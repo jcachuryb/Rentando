@@ -24,7 +24,6 @@ public class SuperAdminConsoleView extends Composite implements Display {
 
 	private FlowPanel flowPanel;
 	private FlexTable table;
-	private Button addButton;
 	private Button cancelButton;
 	private Button saveButton;
 	private List<Integer> changed;
@@ -33,7 +32,6 @@ public class SuperAdminConsoleView extends Composite implements Display {
 	public SuperAdminConsoleView() {
 		flowPanel = new FlowPanel();
 		table = new FlexTable();
-		addButton = new Button("Nuevo");
 		cancelButton = new Button("Cancelar");
 		saveButton = new Button("Guardar");
 		changed = new ArrayList<Integer>();
@@ -83,12 +81,6 @@ public class SuperAdminConsoleView extends Composite implements Display {
 	}
 
 	@Override
-	public HasClickHandlers addNewUsrLoginInfo() {
-		// TODO Auto-generated method stub
-		return this.addButton;
-	}
-
-	@Override
 	public void setLoginList(List<UsrLoginInfo> loginList) {
 		rowInfo.clear();
 		int next = 0;
@@ -135,7 +127,7 @@ public class SuperAdminConsoleView extends Composite implements Display {
 			changed.add(id);
 		}
 	}
-	
+
 	public void removeFromChanges(int id) {
 		if (changed.contains(id)) {
 			changed.remove(id);
@@ -181,7 +173,7 @@ public class SuperAdminConsoleView extends Composite implements Display {
 							addToChanges(id);
 							changed = true;
 						}
-					}else{
+					} else {
 						Window.alert("El usuario no puede quedar sin rol.");
 						removeFromChanges(id);
 						changed = false;

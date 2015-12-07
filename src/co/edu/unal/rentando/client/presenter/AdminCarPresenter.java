@@ -81,6 +81,10 @@ public class AdminCarPresenter extends CarListPresenter implements IPresenter {
 			@Override
 			public void onClick(ClickEvent event) {
 				display.updateCurrentCar();
+				if (getDisplay().getCurrentcar().getId() == null ||getDisplay().getCurrentcar().getId() == "") {
+					Window.alert("Ingrese un ID");
+					return;
+				}
 				rpcService.saveCar(getDisplay().getCurrentcar(),
 						new AsyncCallback<String>() {
 

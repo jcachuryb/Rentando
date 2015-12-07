@@ -1,6 +1,5 @@
 package co.edu.unal.rentando.client.view;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -24,11 +23,11 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 import com.google.gwt.user.datepicker.client.DateBox;
 import com.google.gwt.user.datepicker.client.DatePicker;
-import com.googlecode.objectify.condition.IfZero;
 
 public class UserView extends CarListView implements UserPresenter.Display {
 
@@ -152,6 +151,7 @@ public class UserView extends CarListView implements UserPresenter.Display {
 			initDate = new DateBox();
 			dueDate = new DateBox();
 			dueDate.setEnabled(false);
+			
 			initDate.getElement().setAttribute("placeholder", "Fecha inicio");
 			dueDate.getElement().setAttribute("placeholder", "Fecha fin");
 			car = getCurrentcar();
@@ -160,13 +160,17 @@ public class UserView extends CarListView implements UserPresenter.Display {
 
 			item.fillCarInfo(car);
 			// ***************************
-			datePickers.add(initDate);
-			datePickers.add(dueDate);
+			FlowPanel p = new FlowPanel();
+			p.getElement().addClassName("dateboxes");
+			p.add(initDate);
+			p.add(dueDate);
+			datePickers.add(p);
+			datePickers.add(calendar);
 			buttons.add(cancelBtn);
 			buttons.add(rentButton);
 			// ***************************
 			getContainer().add(item.getWidget());
-			getContainer().add(calendar);
+//			getContainer().add(calendar);
 			getContainer().add(datePickers);
 			getContainer().add(buttons);
 			addDateBoxEvent();
@@ -265,7 +269,7 @@ public class UserView extends CarListView implements UserPresenter.Display {
 		}
 
 		private void addStyles() {
-			datePickers.getElement().addClassName("pop-up");
+			datePickers.getElement().addClassName("popup-calendar-input");
 			// buttons.getElement().addClassName("");
 			//
 			// initDate.getElement().addClassName("");
@@ -308,8 +312,8 @@ public class UserView extends CarListView implements UserPresenter.Display {
 		}
 
 		public void paintMiddleDate(Date from, Date to, String cssClass) {
+			calendar.addStyleToDates(cssClass, from, to);
 			if (to.after(from)) {
-				calendar.addStyleToDates(cssClass, from, to);
 				do {
 					CalendarUtil.addDaysToDate(from, 1);
 					calendar.addStyleToDates(cssClass, from);

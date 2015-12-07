@@ -15,7 +15,8 @@ public class CarListItem {
 	private final FocusPanel wrapper = new FocusPanel();
 	private VerticalPanel r1 = new VerticalPanel();
 	private Image image = new Image();
-	private HTML title = new HTML();
+	private HTML brand = new HTML();
+	private HTML ref = new HTML();
 	private HTML description = new HTML();
 	private HTML price = new HTML();
 
@@ -24,10 +25,11 @@ public class CarListItem {
 	public CarListItem() {
 //		panel.getElement().setClassName("xs-col-12");
 		image.getElement().addClassName("list-car-image");
-//		title.getElement().addClassName("");
-//		price.getElement().addClassName("");
-//		description.getElement().addClassName("");
-//		wrapper.getElement().addClassName("");
+		brand.getElement().addClassName("list-car-brand");
+		ref.getElement().addClassName("list-car-reference");
+		price.getElement().addClassName("list-car-price");
+		description.getElement().addClassName("list-car-description");
+		wrapper.getElement().addClassName("list-car-panel");
 		
 		
 	}
@@ -41,11 +43,11 @@ public class CarListItem {
 	}
 
 	public HTML getTitle() {
-		return title;
+		return brand;
 	}
 
 	public void setTitle(HTML title) {
-		this.title = title;
+		this.brand = title;
 	}
 
 	public HTML getDescription() {
@@ -70,20 +72,21 @@ public class CarListItem {
 
 	public void fillCarInfo(CarInfo carInfo) {
 		image.setUrl(carInfo.getPictURL());
-		title.setHTML("<strong>" + carInfo.getBrand() + "<br> "
-				+ carInfo.getReference() + "</strong>");
-		description.setHTML("<p class='li-car-desc'>" + carInfo.getDescription() + "</p>");
-		price.setHTML("<strong>Precio por día:&nbsp;</strong>"
-				+ carInfo.getPrice());
+		brand.setHTML(carInfo.getBrand());
+		ref.setHTML(carInfo.getReference());
+		description.setHTML("<p>" + carInfo.getDescription() + "</p>");
+		price.setHTML(carInfo.getPrice());
 	}
 
 	public Widget getWidget() {
 
-		r1.add(title);
+		r1.add(brand);
+		r1.add(ref);
 		r1.add(image);
 		panel.add(r1);
 		r1 = new VerticalPanel();
-		r1.add(new HTML("<strong>Sobre este auto: </strong>"));
+		r1.getElement().addClassName("list-vert-panel");
+		r1.add(new HTML("<span style='font-size: 14pt; color: #000, font-weight: bold;'>Sobre este auto: </span>"));
 		r1.add(description);
 		r1.add(price);
 		panel.add(r1);

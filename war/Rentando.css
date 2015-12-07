@@ -149,27 +149,76 @@ a:VISITED, a:HOVER {
 /* POP UP BAR */
 /*CALENDAR*/
 .datePickerDayBusy {
-	background: #f00 !important;
-	color: #fff;
+	background: #C35454 !important;
+	color: #fff !important;
 }
 
 .datePickerDaySelected {
 	background: #71CA68 !important;
-	color: #fff;
+	color: #fff !important;
 }
 
 /* */
 .list-car-image {
 	height: 150px;
-	width: 150px;
+	border: 1px solid #1c0c4f;
+	border-radius: 8px;
 }
 
-.popup-car-brand {
-	
+.list-car-brand {
+	color: black;
+	font-size: 14pt;
+	font-weight: bold;
 }
 
-.popup-car-reference {
-	
+.list-car-reference {
+	color: #6D6D4D;
+	font-size: 13pt;
+}
+
+.list-car-price {
+	color: #1C0C4F;
+	font-size: 20pt;
+}
+
+.list-car-description {
+	color: black;
+	font-size: 13pt;
+}
+
+.list-car-panel {
+	-webkit-box-shadow: 0px 4px 5px 0px rgba(0, 0, 0, 0.75);
+	-moz-box-shadow: 0px 4px 5px 0px rgba(0, 0, 0, 0.75);
+	box-shadow: 0px 4px 5px 0px rgba(0, 0, 0, 0.75);
+	padding: 5px 5px 5px 15px;
+}
+
+.gwt-PopupPanel {
+	left: 20% !important;
+	top: 10% !important;
+	position: absolute;
+	overflow: visible;
+}
+
+.dateboxes {
+	display: block;
+	margin:10x;
+}
+
+.popup-calendar-input {
+	display: flex;
+	position: relative;
+	margin: auto;
+}
+
+.list-vert-panel {
+	margin-left: 16px;
+}
+
+.edition-car-description{
+    height: 100%;
+    margin: 5px;
+    border-radius: 10px;
 }
 
 .rental-list tr td {
@@ -181,10 +230,10 @@ a:VISITED, a:HOVER {
 
 .rental-list {
 	background: rgba(244, 235, 73, 0.66);
-    margin-top: 10px;
-    position: relative;
-    margin-left: auto;
-    margin-right: auto;
+	margin-top: 10px;
+	position: relative;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 .rental-list .gwt-Button {
@@ -193,23 +242,30 @@ a:VISITED, a:HOVER {
 }
 
 .rent-message {
-border: 2px solid #444;
-    border-radius: 5px;
-    color: #fff;
-    font-size: 12pt;
-    padding: 10px;
-    margin-top: 11px;
-    line-height: 1em;
+	border: 2px solid #444;
+	border-radius: 5px;
+	color: #fff;
+	font-size: 12pt;
+	padding: 10px;
+	margin-top: 11px;
+	line-height: 1em;
 }
 
 .none-rent {
-    background: rgba(52, 140, 218, 0.32);
-    color: #1C0C4F;
-    border-color: #1C0C4F;
+	background: rgba(52, 140, 218, 0.32);
+	color: #1C0C4F;
+	border-color: #1C0C4F;
 }
 
 .active-rent {
 	background: rgba(0, 146, 6, 0.29);
-    border-color: #0F7B04;
+	border-color: #0F7B04;
+	color: #1C0C4F;
+}
+
+.btn-add-car {
+    font-size: 13pt;
+    background: #F4EB49;
+    font-weight: bold;
     color: #1C0C4F;
 }

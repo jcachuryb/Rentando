@@ -22,7 +22,6 @@ public class SuperAdminConsolePresenter extends Presenter implements IPresenter 
 
 		HasClickHandlers getCancelButton();
 
-		HasClickHandlers addNewUsrLoginInfo();
 		
 		void setLoginList(List<UsrLoginInfo> loginList);
 		
@@ -56,7 +55,6 @@ public class SuperAdminConsolePresenter extends Presenter implements IPresenter 
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				Window.alert("Save this shit");
 				rpcService.saveLoginInfoBatch(display.getListOfChanges(), new AsyncCallback<String>() {
 					
 					@Override
@@ -77,21 +75,12 @@ public class SuperAdminConsolePresenter extends Presenter implements IPresenter 
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				Window.alert("Reset this shit");
-			}
-		});
-		display.addNewUsrLoginInfo().addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				Window.alert("New motherfucker.");
 			}
 		});
 		rpcService.fetchAllLogins(new AsyncCallback<List<UsrLoginInfo>>() {
 			
 			@Override
 			public void onSuccess(List<UsrLoginInfo> result) {
-				Window.alert(result.get(0).toString());
 				display.setLoginList(result);
 			}
 			

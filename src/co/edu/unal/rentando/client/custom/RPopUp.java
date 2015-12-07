@@ -14,6 +14,7 @@ public class RPopUp extends PopupPanel {
 
 	public RPopUp() {
 		joinBar();
+		
 	}
 
 	public RPopUp(boolean autoHide) {

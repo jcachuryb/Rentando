@@ -84,12 +84,14 @@ public class RentandoServiceImpl extends RemoteServiceServlet implements
 					login.setId(string);
 					login.setUserRoles(roles);
 					login.setUserExists(true);
+					
 				} else {
 					if (!login.getUserRoles().contains(UserRole.super_admin)) {
 						login.getUserRoles().add(UserRole.super_admin);
 					}
 				}
 				daoHelper.getLoginDAO().save(login);
+				createUser(convertToUsrLoginInfo(login));
 			}
 		} catch (Exception e) {
 			System.out.println("Error saving sudos: \n" + e.toString());

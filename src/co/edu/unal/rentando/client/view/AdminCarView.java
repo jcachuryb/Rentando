@@ -30,7 +30,7 @@ public class AdminCarView extends CarListView implements
 		saveButton = new Button("Guardar");
 		deleteButton = new Button("Borrar");
 		addButton = new Button("Añadir");
-
+		
 		// TODO Auto-generated constructor stub
 		addWidgetsAndStyles();
 		mainPanel.add(addButton);
@@ -38,6 +38,7 @@ public class AdminCarView extends CarListView implements
 	}
 
 	private void addWidgetsAndStyles() {
+		addButton.getElement().addClassName("btn-add-car");
 		addButton.addClickHandler(new ClickHandler() {
 
 			@Override
@@ -73,6 +74,13 @@ public class AdminCarView extends CarListView implements
 			this.id.getInput().setEnabled(car.isNew());
 			fillWidget();
 			setWidget(mainPanel);
+			addStyles();
+		}
+
+		private void addStyles() {
+			image.getElement().setClassName("list-car-image");
+			desc.getElement().addClassName("edition-car-description");
+			
 		}
 
 		private void fillWidget() {
@@ -105,13 +113,16 @@ public class AdminCarView extends CarListView implements
 			mainPanel.add(vp);
 
 			vp = new VerticalPanel();
-			vp.add(image);
-			vp.add(desc);
-			mainPanel.add(vp);
+			hp.add(image);
+			hp.add(desc);
+			vp.add(hp);
+			hp = new HorizontalPanel();
 			hp.add(cancel);
 			hp.add(deleteButton);
 			hp.add(saveButton);
-			mainPanel.add(hp);
+			vp.add(hp);
+			mainPanel.add(vp);
+			
 
 		}
 
