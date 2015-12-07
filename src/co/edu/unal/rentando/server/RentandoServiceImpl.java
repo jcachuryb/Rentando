@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.codehaus.jackson.JsonFactory;
@@ -19,7 +20,6 @@ import co.edu.unal.rentando.server.guice.ofy.OfyBusinessModule;
 import co.edu.unal.rentando.server.guice.sql.SqlBusinessModule;
 import co.edu.unal.rentando.server.util.impl.ProviderHelper;
 import co.edu.unal.rentando.shared.CarInfo;
-import co.edu.unal.rentando.shared.ExtraInfo;
 import co.edu.unal.rentando.shared.LoginInfo;
 import co.edu.unal.rentando.shared.NormalUserInfo;
 import co.edu.unal.rentando.shared.RentInfo;
@@ -31,12 +31,13 @@ import co.edu.unal.rentando.shared.many2many.IProfileInfo;
 import co.edu.unal.rentando.shared.many2many.IRent;
 import co.edu.unal.rentando.shared.many2many.IUsrLogin;
 import co.edu.unal.rentando.shared.many2many.IUsrLogin.UserRole;
-import co.edu.unal.rentando.shared.many2many.ofy.OfyCar;
+import co.edu.unal.rentando.shared.many2many.ofy.ExtraInfo;
 import co.edu.unal.rentando.shared.many2many.ofy.dao.DAOHelper;
 
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.google.inject.Guice;
@@ -64,6 +65,35 @@ public class RentandoServiceImpl extends RemoteServiceServlet implements
 		providers = ProviderHelper.getInstance();
 		DAOHelper.initialize(injector);
 		daoHelper = DAOHelper.getInstance();
+
+		checkForSuperAdmins();
+	}
+
+	private void checkForSuperAdmins() {
+		try {
+			ArrayList<String> sudos = new ArrayList<String>();
+			sudos.add("truancamilo@gmail.com");
+			sudos.add("jcachuryb@unal.edu.co");
+			ArrayList<UserRole> roles = new ArrayList<IUsrLogin.UserRole>();
+			for (String string : sudos) {
+				IUsrLogin login = daoHelper.getLoginDAO().load(string);
+				if (login == null) {
+					login = providers.getLoginProvider().getNewLogin();
+					roles.clear();
+					roles.add(UserRole.super_admin);
+					login.setId(string);
+					login.setUserRoles(roles);
+					login.setUserExists(true);
+				} else {
+					if (!login.getUserRoles().contains(UserRole.super_admin)) {
+						login.getUserRoles().add(UserRole.super_admin);
+					}
+				}
+				daoHelper.getLoginDAO().save(login);
+			}
+		} catch (Exception e) {
+			System.out.println("Error saving sudos: \n" + e.toString());
+		}
 	}
 
 	// TODO #11: implement login helper methods in service implementation
@@ -166,12 +196,10 @@ public class RentandoServiceImpl extends RemoteServiceServlet implements
 		} catch (final IOException e) {
 		}
 
-		IProfileInfo profileInfo;
-		UserInfo finalUserInfo;
 		// Check if User exists
 		String userEmail = userInfo.getEmail();
 		IUsrLogin usrLogin = this.daoHelper.getLoginDAO().load(userEmail);
-		if (usrLogin == null) {
+		if (usrLogin == null && userEmail != null) {
 			usrLogin = providers.getLoginProvider().getNewLogin();
 			usrLogin.setId(userEmail);
 			ArrayList<UserRole> roles = new ArrayList<IUsrLogin.UserRole>();
@@ -181,24 +209,6 @@ public class RentandoServiceImpl extends RemoteServiceServlet implements
 			daoHelper.getLoginDAO().save(usrLogin);
 			createUser(convertToUsrLoginInfo(usrLogin));
 		}
-		// if (usrLogin != null) {
-		// if (usrLogin.userExists()) {
-		// profileInfo = this.daoHelper.getProfileDao().loadUser(userEmail);
-		// finalUserInfo = converTotUserInfo(profileInfo);
-		// finalUserInfo.setRoles(usrLogin.getUserRoles());
-		// } else {
-		// if (usrLogin.getUserRoles().contains(UserRole.normal_user)) {
-		// INormalUser normalUser = providers.getNormalUserProvider().getuser();
-		// finalUserInfo = converTotUserInfo(normalUser.getProfileInfo());
-		//
-		// }
-		// // Create new User with the given Role.
-		// }
-		// } else {
-		// // Create new User with NormalUserRole.
-		// }
-
-		//
 		return convertToUsrLoginInfo(usrLogin);
 	}
 
@@ -218,9 +228,11 @@ public class RentandoServiceImpl extends RemoteServiceServlet implements
 				INormalUser normalUser = providers.getNormalUserProvider()
 						.getuser();
 				normalUser.setId(email);
+				normalUser.setTotalPayed("0");
+				normalUser.setExtraInfo(new ExtraInfo());
 				daoHelper.getNormalUserDao().saveUser(normalUser);
 			} catch (Exception e) {
-				Window.alert("Error saving Normal User: " + e);
+				System.out.println("Error saving Normal User: " + e);
 			}
 		}
 
@@ -270,6 +282,9 @@ public class RentandoServiceImpl extends RemoteServiceServlet implements
 	@Override
 	public List<CarInfo> fetchCars() {
 		List<ICar> iCarList = this.daoHelper.getCarDao().fetchAllCars();
+		if (iCarList == null) {
+			return new ArrayList<CarInfo>();
+		}
 		ArrayList<CarInfo> carInfoList = new ArrayList<>();
 		for (ICar item : iCarList) {
 			CarInfo newCar = new CarInfo();
@@ -290,7 +305,7 @@ public class RentandoServiceImpl extends RemoteServiceServlet implements
 		return newList;
 	}
 
-	private List<RentInfo> getRentInfoList(List<IRent> list) {
+	public List<RentInfo> getRentInfoList(List<IRent> list) {
 		List<RentInfo> newList = new ArrayList<RentInfo>();
 		for (IRent info : list) {
 			newList.add(convertToRentInfo(info));
@@ -340,7 +355,7 @@ public class RentandoServiceImpl extends RemoteServiceServlet implements
 		return loginInfo;
 	}
 
-	private RentInfo convertToRentInfo(IRent rent) {
+	public RentInfo convertToRentInfo(IRent rent) {
 		RentInfo rentInfo = new RentInfo();
 		rentInfo.setId(rent.getId());
 		rentInfo.setInitDate(rent.getInitDate());
@@ -360,7 +375,7 @@ public class RentandoServiceImpl extends RemoteServiceServlet implements
 		return rentInfo;
 	}
 
-	private CarInfo convertToCarInfo(ICar car) {
+	public CarInfo convertToCarInfo(ICar car) {
 		CarInfo info = new CarInfo();
 		info.setId(car.getId());
 		info.setBrand(car.getBrand());
@@ -453,9 +468,16 @@ public class RentandoServiceImpl extends RemoteServiceServlet implements
 
 	@Override
 	public synchronized String saveRent(RentInfo info) {
+		// TODO
+		IRent cc = daoHelper.getRentDao().loadRent(info.getId());
+		if (cc != null) {
+			return "El usuario tiene un alquiler vigente.";
+		}
+
 		CarInfo car = info.getCar();
 		ICar carInfo = daoHelper.getCarDao().loadCar(car.getId());
-		List<IRent> rentals = carInfo.getRentals() == null ? new ArrayList<IRent>(): carInfo.getRentals();
+		List<IRent> rentals = carInfo.getRentals();
+		rentals = new ArrayList<IRent>();
 		boolean validDates = true;
 		for (IRent rent : rentals) {
 			if (!info.getInitDate().after(rent.getDueDate())) {
@@ -477,9 +499,10 @@ public class RentandoServiceImpl extends RemoteServiceServlet implements
 				daoHelper.getRentDao().saveRent(nRent);
 				carInfo.doRent(nRent);
 				daoHelper.getCarDao().saveCar(carInfo);
+
 				return "Success";
 			} catch (Exception e) {
-				return "Error";
+				return "Error: " + e.toString();
 			}
 		}
 		// TODO Auto-generated method stub
@@ -489,17 +512,49 @@ public class RentandoServiceImpl extends RemoteServiceServlet implements
 	@Override
 	public RentInfo loadRent(String id) {
 		IRent rent = daoHelper.getRentDao().loadRent(id);
-		RentInfo info = convertToRentInfo(rent); 
+		RentInfo info;
+		if (rent != null) {
+			info = convertToRentInfo(rent);
+		} else {
+			info = new RentInfo();
+			info.setId("");
+		}
 		return info;
 	}
 
 	@Override
-	public List<RentInfo> fetchCarAssocRents(CarInfo info) {
-		ICar car = daoHelper.getCarDao().loadCar(info.getId());
+	public List<RentInfo> fetchRentals() {
+		List<IRent> list = daoHelper.getRentDao().fetchRentals();
+		List<RentInfo> info = new ArrayList<RentInfo>();
+		if (list != null) {
+			for (IRent rent : list) {
+				info.add(convertToRentInfo(rent));
+			}
+		}
+		return info;
+	}
+
+	@Override
+	public List<RentInfo> fetchCarAssocRents(String id) {
+		ICar car = daoHelper.getCarDao().loadCar(id);
 		List<IRent> rentals = car.getRentals();
 
 		// TODO Auto-generated method stub
-		return null;
+		return getRentInfoList(rentals);
+	}
+
+	@Override
+	public String registerReturnedCar(RentInfo info) {
+		ICar car = daoHelper.getCarDao().loadCar(info.getCar().getId());
+		for (IRent r : car.getRentals()) {
+			if (r.getId().equals(info.getId())) {
+				car.removeRental(convertToRentInfo(r));
+				break;
+			}
+		}
+		daoHelper.getCarDao().saveCar(car);
+		daoHelper.getRentDao().remove(info.getId());
+		return "Listo";
 	}
 
 }

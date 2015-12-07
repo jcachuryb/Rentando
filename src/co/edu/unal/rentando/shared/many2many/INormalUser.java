@@ -1,6 +1,6 @@
 package co.edu.unal.rentando.shared.many2many;
 
-import co.edu.unal.rentando.shared.ExtraInfo;
+import co.edu.unal.rentando.shared.many2many.ofy.ExtraInfo;
 
 public interface INormalUser {
 
@@ -15,11 +15,9 @@ public interface INormalUser {
 	void setCurentRent(IRent rent);
 
 	IRent getCurentRent();
-	
-	IProfileInfo getProfileInfo();
-	
+
 	String getId();
-	
+
 	void setId(String id);
 
 }

@@ -1,24 +1,21 @@
 package co.edu.unal.rentando.shared.many2many.ofy;
 
-import co.edu.unal.rentando.shared.ExtraInfo;
 import co.edu.unal.rentando.shared.many2many.INormalUser;
-import co.edu.unal.rentando.shared.many2many.IProfileInfo;
 import co.edu.unal.rentando.shared.many2many.IRent;
 
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
-import com.googlecode.objectify.annotation.Ignore;
-import com.googlecode.objectify.annotation.Subclass;
+import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Serialize;
 
 @Entity
-@Subclass
-public class OfyNormalUser extends OfyProfileInfo implements INormalUser {
+public class OfyNormalUser implements INormalUser {
 
+	@Id
+	private String Id;
 	private String total;
-	private ExtraInfo extraInfo;
+	@Serialize private ExtraInfo extraInfo;
 	private Ref<IRent> rent;
-	@Ignore
-	private IProfileInfo profile;
 
 	@Override
 	public void setTotalPayed(String value) {
@@ -67,5 +64,15 @@ public class OfyNormalUser extends OfyProfileInfo implements INormalUser {
 				+ ", extraInfo=" + extraInfo + ", rent=" + rent + "]";
 	}
 
+	@Override
+	public String getId() {
+		// TODO Auto-generated method stub
+		return Id;
+	}
+
+	@Override
+	public void setId(String id) {
+		this.Id = id;
+	}
 
 }

@@ -7,7 +7,7 @@ public class SuperAdminEvent extends GwtEvent<SuperAdminEventHandler> {
 	public static Type<SuperAdminEventHandler> TYPE = new Type<SuperAdminEventHandler>();
 
 	@Override
-	public com.google.gwt.event.shared.GwtEvent.Type<SuperAdminEventHandler> getAssociatedType() {
+	public Type<SuperAdminEventHandler> getAssociatedType() {
 		// TODO Auto-generated method stub
 		return TYPE;
 	}

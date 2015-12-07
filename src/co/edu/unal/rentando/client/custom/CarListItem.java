@@ -23,9 +23,13 @@ public class CarListItem {
 
 	public CarListItem() {
 //		panel.getElement().setClassName("xs-col-12");
-		image.setHeight("150px");
-		image.setWidth("150px");
-		// TODO Auto-generated constructor stub
+		image.getElement().addClassName("list-car-image");
+//		title.getElement().addClassName("");
+//		price.getElement().addClassName("");
+//		description.getElement().addClassName("");
+//		wrapper.getElement().addClassName("");
+		
+		
 	}
 
 	public Image getImage() {
@@ -66,7 +70,7 @@ public class CarListItem {
 
 	public void fillCarInfo(CarInfo carInfo) {
 		image.setUrl(carInfo.getPictURL());
-		title.setHTML("<strong>" + carInfo.getBrand() + " "
+		title.setHTML("<strong>" + carInfo.getBrand() + "<br> "
 				+ carInfo.getReference() + "</strong>");
 		description.setHTML("<p class='li-car-desc'>" + carInfo.getDescription() + "</p>");
 		price.setHTML("<strong>Precio por día:&nbsp;</strong>"

@@ -20,7 +20,7 @@ public class INormalUserProviderImpl implements INormalUserProvider {
 	@Override
 	public INormalUser getuser() {
 		// TODO Auto-generated method stub
-		return null;
+		return provider.get();
 	}
 
 }

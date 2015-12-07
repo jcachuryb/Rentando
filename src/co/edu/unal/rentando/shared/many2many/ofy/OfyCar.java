@@ -25,9 +25,9 @@ public class OfyCar implements ICar {
 	private String description;
 	private String price;
 	@Load
-	private List<Ref<IRent>> refRentals;
+	private List<Ref<IRent>> refRentals = new ArrayList<Ref<IRent>>();
 	@Ignore
-	private List<IRent> rentals;
+	private List<IRent> rentals = new ArrayList<IRent>();
 
 	@Override
 	public void setId(String id) {
@@ -115,15 +115,14 @@ public class OfyCar implements ICar {
 
 	@Override
 	public List<IRent> getRentals() {
-		if (rentals != null && refRentals != null) {
-			if (rentals.size() != refRentals.size()) {
+		if (refRentals != null) {
+			if (refRentals.size() != rentals.size()) {
 				rentals.clear();
 				for (Ref<IRent> ref : refRentals) {
 					rentals.add(ref.get());
 				}
 			}
-		}
-		else{
+		} else {
 			rentals = new ArrayList<IRent>();
 			refRentals = new ArrayList<Ref<IRent>>();
 		}
@@ -134,6 +133,12 @@ public class OfyCar implements ICar {
 	public void removeRental(RentInfo value) {
 		// TODO Auto-generated method stub
 		try {
+			int next = 0;
+			for (Ref<IRent> ref : refRentals) {
+				if (ref.get().getId() == value.getId()) {
+					refRentals.remove(next);
+				}
+			}
 			rentals.remove(value);
 			System.out.println("Objeto removido");
 		} catch (Exception e) {

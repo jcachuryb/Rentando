@@ -55,8 +55,8 @@ public class SuperAdminConsoleView extends Composite implements Display {
 		headers.getElement().addClassName("login-table-header");
 		headers.setText("Normal user");
 		table.setWidget(0, 1, headers);
-		headers.setText("Admin user");
 		headers = new HTML();
+		headers.setText("Admin user");
 		headers.getElement().addClassName("login-table-header");
 		table.setWidget(0, 2, headers);
 		headers = new HTML();

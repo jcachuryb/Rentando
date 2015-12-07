@@ -2,6 +2,8 @@ package co.edu.unal.rentando.shared;
 
 import java.io.Serializable;
 
+import co.edu.unal.rentando.shared.many2many.ofy.ExtraInfo;
+
 public class NormalUserInfo implements Serializable {
 
 	/**

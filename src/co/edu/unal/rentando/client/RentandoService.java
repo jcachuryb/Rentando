@@ -3,12 +3,12 @@ package co.edu.unal.rentando.client;
 import java.util.List;
 
 import co.edu.unal.rentando.shared.CarInfo;
-import co.edu.unal.rentando.shared.ExtraInfo;
 import co.edu.unal.rentando.shared.LoginInfo;
 import co.edu.unal.rentando.shared.NormalUserInfo;
 import co.edu.unal.rentando.shared.RentInfo;
 import co.edu.unal.rentando.shared.UserInfo;
 import co.edu.unal.rentando.shared.UsrLoginInfo;
+import co.edu.unal.rentando.shared.many2many.ofy.ExtraInfo;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -72,6 +72,10 @@ public interface RentandoService extends RemoteService {
 	
 	RentInfo loadRent(String id);
 	
-	List<RentInfo> fetchCarAssocRents(CarInfo car);
+	List<RentInfo> fetchRentals();
+	
+	List<RentInfo> fetchCarAssocRents(String id);
+	
+	String registerReturnedCar(RentInfo info);
 
 }

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import co.edu.unal.rentando.server.RentandoServiceImpl;
 import co.edu.unal.rentando.shared.many2many.ICar;
 
 public class CarInfo implements Serializable {
@@ -118,8 +119,7 @@ public class CarInfo implements Serializable {
 		this.setDescription(car.getDescription());
 		this.setReference(car.getReference());
 		this.setPrice(car.getRentalPrice());
-//		TODO 
-//		this.setRentals(iCar.getRentals());
+//		this.setRentals(RentandoServiceImpl.getRentInfoList(car.getRentals()));
 	}
 
 }

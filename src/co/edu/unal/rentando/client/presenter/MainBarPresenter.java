@@ -8,6 +8,7 @@ import co.edu.unal.rentando.client.event.AdminCarConsoleEvent;
 import co.edu.unal.rentando.client.event.SuperAdminEvent;
 import co.edu.unal.rentando.client.event.LoginEvent;
 import co.edu.unal.rentando.client.event.UserViewEvent;
+import co.edu.unal.rentando.client.event.ViewUsersEvent;
 import co.edu.unal.rentando.shared.LoginInfo;
 import co.edu.unal.rentando.shared.UsrLoginInfo;
 import co.edu.unal.rentando.shared.many2many.IUsrLogin.UserRole;
@@ -100,7 +101,7 @@ public class MainBarPresenter extends Presenter implements IPresenter {
 
 	public void loadLogin(final LoginInfo loginInfo) {
 		display.getLoginLink().setHref(loginInfo.getLoginUrl());
-		display.getLoginLink().setText("Sign in");
+		display.getLoginLink().setText("*ENTRAR*");
 		display.getLoginLink().setEnabled(true);
 	}
 
@@ -118,8 +119,8 @@ public class MainBarPresenter extends Presenter implements IPresenter {
 				@Override
 				public void onClick(ClickEvent event) {
 					// Window.alert("sdfdsfadsf");
-					display.setSelected(MenuItemType.INICIO);
-					eventBus.fireEvent(new LoginEvent());
+//					display.setSelected(MenuItemType.INICIO);
+//					eventBus.fireEvent(new LoginEvent());
 				}
 			});
 		}
@@ -163,7 +164,7 @@ public class MainBarPresenter extends Presenter implements IPresenter {
 				@Override
 				public void onClick(ClickEvent event) {
 					display.setSelected(MenuItemType.USUARIOS);
-					Window.alert("Users");
+					eventBus.fireEvent(new ViewUsersEvent());
 				}
 			});
 		}

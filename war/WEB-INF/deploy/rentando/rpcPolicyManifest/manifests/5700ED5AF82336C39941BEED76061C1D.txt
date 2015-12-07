@@ -1,0 +1,2 @@
+serviceClass: co.edu.unal.rentando.client.RentandoService
+path: 75F1941332AC330574FA921252358177.gwt.rpc

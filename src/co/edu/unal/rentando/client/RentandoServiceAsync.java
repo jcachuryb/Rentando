@@ -3,12 +3,12 @@ package co.edu.unal.rentando.client;
 import java.util.List;
 
 import co.edu.unal.rentando.shared.CarInfo;
-import co.edu.unal.rentando.shared.ExtraInfo;
 import co.edu.unal.rentando.shared.LoginInfo;
 import co.edu.unal.rentando.shared.NormalUserInfo;
 import co.edu.unal.rentando.shared.RentInfo;
 import co.edu.unal.rentando.shared.UserInfo;
 import co.edu.unal.rentando.shared.UsrLoginInfo;
+import co.edu.unal.rentando.shared.many2many.ofy.ExtraInfo;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -74,5 +74,9 @@ public interface RentandoServiceAsync {
 
 	void loadRent(String id, AsyncCallback<RentInfo> callback);
 
-	void fetchCarAssocRents(CarInfo car, AsyncCallback<List<RentInfo>> callback);
+	void fetchRentals(AsyncCallback<List<RentInfo>> callback);
+
+	void fetchCarAssocRents(String id, AsyncCallback<List<RentInfo>> callback);
+
+	void  registerReturnedCar(RentInfo info, AsyncCallback<String> callback);
 }
